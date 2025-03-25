@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1058268039999",
+    "project_id": "semhub-38b7e",
+    "storage_bucket": "semhub-38b7e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1058268039999:android:73c30fbcdf9103e902e18a",
+        "android_client_info": {
+          "package_name": "com.himanshu.semhub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1058268039999-0fvnvidsvlsmh7s7n6fa7141mnh9u6vo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.himanshu.semhub",
+            "certificate_hash": "7cf0e12dfd07882ae1f7376937535f2bc4ffd346"
+          }
+        },
+        {
+          "client_id": "1058268039999-48e30nkkrj40tt54gk1nkbjdg5evc0o4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFlZ39MOkCIyXBlO8A5q6H32_AUQadppg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1058268039999-48e30nkkrj40tt54gk1nkbjdg5evc0o4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

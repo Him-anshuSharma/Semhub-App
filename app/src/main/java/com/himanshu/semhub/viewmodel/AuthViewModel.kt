@@ -1,0 +1,49 @@
+package com.himanshu.semhub.viewmodel
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.himanshu.semhub.data.repository.AuthRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class AuthViewModel @Inject constructor(
+    private val authRepository: AuthRepository
+) : ViewModel() {
+
+    private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
+    val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
+
+    fun login() {
+        viewModelScope.launch {
+            _loginState.value = LoginState.Loading
+            try {
+                val authCred = authRepository.login()
+                if (authCred != null) {
+                    authRepository.signInWithFirebase(authCred)
+                        .onSuccess {
+                            _loginState.value = LoginState.Success
+                        }
+                        .onFailure {
+                            _loginState.value = LoginState.Error(it.localizedMessage ?: "Unknown error")
+                        }
+                } else {
+                    _loginState.value = LoginState.Error("Failed to retrieve credentials")
+                }
+            } catch (e: Exception) {
+                _loginState.value = LoginState.Error(e.localizedMessage ?: "Login error")
+            }
+        }
+    }
+}
+
+sealed class LoginState {
+    data object Idle : LoginState()
+    data object Loading : LoginState()
+    data object Success : LoginState()
+    data class Error(val message: String) : LoginState()
+}
