@@ -12,6 +12,8 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -27,6 +29,16 @@ class AuthRepository @Inject constructor(
     private val credentialManager: CredentialManager,
     @Named("webClientId") private val webClientId: String
 ) {
+    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+
+    fun getCurrentUser(): FirebaseUser? {
+        return firebaseAuth.currentUser
+    }
+
+    fun signOut() {
+        firebaseAuth.signOut()
+    }
+
     suspend fun login(): AuthCredential? {
         val request = getCredentialRequest()
         return try {

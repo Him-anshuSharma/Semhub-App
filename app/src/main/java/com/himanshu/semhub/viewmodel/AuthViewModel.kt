@@ -2,6 +2,8 @@ package com.himanshu.semhub.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.himanshu.semhub.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +16,8 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
+
+    private var user: FirebaseUser? = authRepository.getCurrentUser()!!
 
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
     val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
@@ -39,6 +43,11 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
+
+    fun getProfile(): FirebaseUser? {
+        return user
+    }
+
 }
 
 sealed class LoginState {

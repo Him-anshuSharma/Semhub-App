@@ -1,13 +1,12 @@
 package com.himanshu.semhub.ui.navigation
 
-import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.credentials.CredentialManager
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.himanshu.semhub.ui.screens.LoginScreen
-import com.himanshu.semhub.ui.screens.ProfileScreen
+import com.himanshu.semhub.ui.screens.homescreen.HomeScreen
+import com.himanshu.semhub.ui.screens.login.LoginScreen
+import com.himanshu.semhub.ui.screens.homescreen.Profile
 
 @Composable
 fun AppNavigation(
@@ -18,8 +17,8 @@ fun AppNavigation(
         composable("login") {
             LoginScreen(navController = navController)
         }
-        composable("profile") {
-            ProfileScreen()
+        composable("homescreen") {
+            HomeScreen()
         }
     }
 }

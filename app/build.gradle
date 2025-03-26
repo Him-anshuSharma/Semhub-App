@@ -41,6 +41,9 @@ android {
 
 dependencies {
 
+
+    implementation libs.androidx.navigation.compose.v251
+
     implementation libs.kotlinx.coroutines.play.services
 
     implementation libs.androidx.activity.compose.v182

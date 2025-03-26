@@ -1,4 +1,4 @@
-package com.himanshu.semhub.ui.screens
+package com.himanshu.semhub.ui.screens.login
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
@@ -85,7 +85,7 @@ fun LoginScreen(
     LaunchedEffect(loginState) {
         when (loginState) {
             is LoginState.Success -> {
-                navController.navigate("profile") {
+                navController.navigate("homescreen") {
                     popUpTo("login") { inclusive = true }
                 }
             }
