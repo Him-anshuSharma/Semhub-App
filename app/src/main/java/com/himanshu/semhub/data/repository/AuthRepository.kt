@@ -53,7 +53,7 @@ class AuthRepository @Inject constructor(
     private fun getCredentialRequest(): GetCredentialRequest {
         val googleIdOption = GetGoogleIdOption.Builder()
             .setServerClientId(webClientId)
-            .setFilterByAuthorizedAccounts(true)
+            .setFilterByAuthorizedAccounts(false)
             .build()
 
         return GetCredentialRequest.Builder()
