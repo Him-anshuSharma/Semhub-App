@@ -19,9 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun HomeScreen(){
+    val bottomNavController = rememberNavController()
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -33,27 +37,36 @@ fun HomeScreen(){
                 floatingActionButton = {
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly){
                         FloatingActionButton(
-                            onClick = {}
+                            onClick = {
+                                bottomNavController.navigate("timetable")
+                            }
                         ) {
-                            Icon(Icons.Filled.DateRange, "Localized description")
+                            Icon(Icons.Filled.DateRange, "TimeTable")
                         }
                         FloatingActionButton(
                             onClick = {}
                         ) {
-                            Icon(Icons.Filled.Email, "Localized description")
+                            Icon(Icons.Filled.Email, "Chat")
                         }
                         FloatingActionButton(
-                            onClick = {}
+                            onClick = {
+                                bottomNavController.navigate("profile")
+                            }
                         ) {
-                            Icon(Icons.Filled.Face, "Localized description")
+                            Icon(Icons.Filled.Face, "Profile")
                         }
                     }
                 }
             )
         }
     ) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
-            Profile()
+        NavHost(
+            navController = bottomNavController,
+            startDestination = "profile",
+            modifier = Modifier.padding(paddingValues)
+        ) {
+            composable("profile") { Profile() }
+            composable("timetable") { Timetable() }
         }
     }
 }

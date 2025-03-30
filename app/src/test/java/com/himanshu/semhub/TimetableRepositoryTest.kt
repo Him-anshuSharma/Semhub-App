@@ -49,7 +49,7 @@ class TimetableRepositoryTest {
         val response = repository.getTimeTable(file)
         println()
         println()
-        println(response.body().toString())
+        println(response.body()?.monday.toString())
         println()
         println()
         assertEquals(true, response.isSuccessful)

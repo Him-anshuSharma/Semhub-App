@@ -1,5 +1,6 @@
 package com.himanshu.semhub.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.himanshu.semhub.data.model.Timetable
@@ -11,7 +12,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
-
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val timetableRepository: TimetableRepository
@@ -23,13 +23,17 @@ class HomeViewModel @Inject constructor(
     fun getTimeTable(file: File) {
         viewModelScope.launch {
             try {
+                Log.d("HomeViewModel", "Uploading file: ${file.name}")  // Debugging
                 val response = timetableRepository.getTimeTable(file)
                 if (response.isSuccessful) {
                     _timetableState.value = response.body()
+                    Log.d("HomeViewModel", "Response Success: ${response.body()}")
                 } else {
+                    Log.e("HomeViewModel", "Response Error: ${response.errorBody()?.string()}")
                     _timetableState.value = null
                 }
             } catch (e: Exception) {
+                Log.e("HomeViewModel", "Exception: ${e.message}", e)
                 _timetableState.value = null
             }
         }
