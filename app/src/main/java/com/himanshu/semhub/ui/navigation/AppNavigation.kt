@@ -6,7 +6,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.himanshu.semhub.ui.screens.homescreen.HomeScreen
 import com.himanshu.semhub.ui.screens.login.LoginScreen
-import com.himanshu.semhub.ui.screens.homescreen.Profile
 
 @Composable
 fun AppNavigation(

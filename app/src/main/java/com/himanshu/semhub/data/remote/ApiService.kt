@@ -1,6 +1,6 @@
 package com.himanshu.semhub.data.remote
 
-import com.himanshu.semhub.data.model.Timetable
+import Timetable
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Multipart

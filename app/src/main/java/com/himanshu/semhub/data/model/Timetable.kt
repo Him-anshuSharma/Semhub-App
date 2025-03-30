@@ -1,13 +1,28 @@
-package com.himanshu.semhub.data.model
+data class Timetable(
+    val Monday: List<List<String>>,
+    val Tuesday: List<List<String>>,
+    val Wednesday: List<List<String>>,
+    val Thursday: List<List<String>>,
+    val Friday: List<List<String>>,
+    val Saturday: List<List<String>>,
+    val Sunday: List<List<String>>
+) {
+    fun getDaySchedule(day: String): List<SubjectSchedule> {
+        val daySchedule = when (day.lowercase()) {
+            "monday" -> Monday
+            "tuesday" -> Tuesday
+            "wednesday" -> Wednesday
+            "thursday" -> Thursday
+            "friday" -> Friday
+            "saturday" -> Saturday
+            "sunday" -> Sunday
+            else -> emptyList()
+        }
+        return daySchedule.map { SubjectSchedule(it[0], it[1]) } // Convert manually
+    }
+}
 
-class Timetable(
-    val monday: List<List<String>> = ArrayList(),
-    val tuesday: List<List<String>> = ArrayList(),
-    val wednesday: List<List<String>> = ArrayList(),
-    val thursday: List<List<String>> = ArrayList(),
-    val friday: List<List<String>> = ArrayList(),
-    val saturday: List<List<String>> = ArrayList(),
-    val sunday: List<List<String>> = ArrayList()
+data class SubjectSchedule(
+    val time: String,
+    val subject: String
 )
-
-

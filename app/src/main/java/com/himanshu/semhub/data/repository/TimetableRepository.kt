@@ -1,7 +1,7 @@
 package com.himanshu.semhub.data.repository
 
+import Timetable
 import android.util.Log
-import com.himanshu.semhub.data.model.Timetable
 import com.himanshu.semhub.data.remote.ApiService
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -29,7 +29,8 @@ class TimetableRepository @Inject constructor(private val apiService: ApiService
         val multipartFile = MultipartBody.Part.createFormData("file", file.name, requestBody)
 
         Log.d("TimetableRepository", "Calling API with file: ${file.name}")
-        return apiService.uploadFile(multipartFile)
+        val res =  apiService.uploadFile(multipartFile)
+        return res
     }
 }
 

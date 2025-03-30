@@ -1,4 +1,4 @@
-package com.himanshu.semhub.ui.components
+package com.himanshu.semhub.ui.screens.login.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

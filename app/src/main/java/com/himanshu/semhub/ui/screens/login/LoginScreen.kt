@@ -33,7 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.himanshu.semhub.R
-import com.himanshu.semhub.ui.components.GoogleSignInButton
+import com.himanshu.semhub.ui.screens.login.components.GoogleSignInButton
 import com.himanshu.semhub.viewmodel.AuthViewModel
 import com.himanshu.semhub.viewmodel.LoginState
 
@@ -81,6 +81,8 @@ fun LoginScreen(
     viewModel: AuthViewModel = hiltViewModel(),
 ) {
     val loginState by viewModel.loginState.collectAsState()
+
+    viewModel.check()
 
     LaunchedEffect(loginState) {
         when (loginState) {

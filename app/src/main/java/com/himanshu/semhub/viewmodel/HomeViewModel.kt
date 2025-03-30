@@ -1,9 +1,10 @@
 package com.himanshu.semhub.viewmodel
 
+import SubjectSchedule
+import Timetable
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.himanshu.semhub.data.model.Timetable
 import com.himanshu.semhub.data.repository.TimetableRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,4 +39,13 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+    fun getTimeTableDayWise(day:String):List<SubjectSchedule>?{
+        if(timetableState.value!=null){
+            return timetableState.value?.getDaySchedule(day.lowercase())
+
+        }
+        else return null
+    }
+
 }

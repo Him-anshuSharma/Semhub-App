@@ -1,8 +1,6 @@
 package com.himanshu.semhub.ui.screens.homescreen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,6 +12,7 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,11 +21,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.himanshu.semhub.ui.screens.homescreen.fragments.Profile
+import com.himanshu.semhub.ui.screens.homescreen.fragments.Timetable
 
 @Composable
 fun HomeScreen(){
     val bottomNavController = rememberNavController()
     Scaffold(
+
         bottomBar = {
             BottomAppBar(
                 containerColor = Color(0x00FF0000),

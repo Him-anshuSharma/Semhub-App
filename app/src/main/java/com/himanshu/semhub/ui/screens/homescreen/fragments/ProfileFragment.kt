@@ -1,4 +1,4 @@
-package com.himanshu.semhub.ui.screens.homescreen
+package com.himanshu.semhub.ui.screens.homescreen.fragments
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
