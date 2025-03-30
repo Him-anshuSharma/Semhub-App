@@ -1,7 +1,7 @@
-package com.himanshu.semhub.viewmodel
+package com.himanshu.semhub.viewmodel.timetable
 
-import SubjectSchedule
-import Timetable
+import com.himanshu.semhub.data.model.timetable.SubjectSchedule
+import com.himanshu.semhub.data.model.timetable.Timetable
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class TimeTableViewModel @Inject constructor(
     private val timetableRepository: TimetableRepository
 ) : ViewModel() {
 

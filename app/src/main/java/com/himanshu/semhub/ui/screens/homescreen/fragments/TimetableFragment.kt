@@ -26,16 +26,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.himanshu.semhub.ui.screens.homescreen.components.TimeTableCard
 import com.himanshu.semhub.utils.getCurrentDay
 import com.himanshu.semhub.utils.uriToFile
-import com.himanshu.semhub.viewmodel.HomeViewModel
+import com.himanshu.semhub.viewmodel.timetable.TimeTableViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Timetable(
-    homeViewModel: HomeViewModel = hiltViewModel()
+    timeTableViewModel: TimeTableViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val timetableState by homeViewModel.timetableState.collectAsState()
+    val timetableState by timeTableViewModel.timetableState.collectAsState()
     val fileUri = remember { mutableStateOf<Uri?>(null) }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -49,7 +49,7 @@ fun Timetable(
             val file = uriToFile(context, uri)
             file?.let {
                 Log.d("Timetable", "Converted file: ${it.name}")
-                homeViewModel.getTimeTable(it)
+                timeTableViewModel.getTimeTable(it)
             }
         }
     }
@@ -71,7 +71,7 @@ fun Timetable(
         else{
             val today = getCurrentDay()
             Log.d("anshu",today)// Function should return a string like "Monday"
-            val subjectList = homeViewModel.getTimeTableDayWise(today)
+            val subjectList = timeTableViewModel.getTimeTableDayWise(today)
 
             Log.d("anshu",subjectList.toString())
 

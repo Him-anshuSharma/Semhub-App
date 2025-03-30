@@ -1,8 +1,7 @@
-package com.himanshu.semhub.viewmodel
+package com.himanshu.semhub.viewmodel.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.himanshu.semhub.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,7 +37,8 @@ class AuthViewModel @Inject constructor(
                             _loginState.value = LoginState.Success
                         }
                         .onFailure {
-                            _loginState.value = LoginState.Error(it.localizedMessage ?: "Unknown error")
+                            _loginState.value =
+                                LoginState.Error(it.localizedMessage ?: "Unknown error")
                         }
                 } else {
                     _loginState.value = LoginState.Error("Failed to retrieve credentials")

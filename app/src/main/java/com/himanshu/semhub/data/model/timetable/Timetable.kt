@@ -1,3 +1,5 @@
+package com.himanshu.semhub.data.model.timetable
+
 data class Timetable(
     val Monday: List<List<String>>,
     val Tuesday: List<List<String>>,

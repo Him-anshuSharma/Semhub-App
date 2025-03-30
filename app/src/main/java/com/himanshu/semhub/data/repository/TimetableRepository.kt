@@ -1,12 +1,11 @@
 package com.himanshu.semhub.data.repository
 
-import Timetable
+import com.himanshu.semhub.data.model.timetable.Timetable
 import android.util.Log
 import com.himanshu.semhub.data.remote.ApiService
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
 import java.io.File
