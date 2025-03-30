@@ -12,40 +12,60 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
+import java.sql.Time
 import javax.inject.Inject
 @HiltViewModel
 class TimeTableViewModel @Inject constructor(
     private val timetableRepository: TimetableRepository
 ) : ViewModel() {
 
-    private val _timetableState = MutableStateFlow<Timetable?>(null)
-    val timetableState: StateFlow<Timetable?> = _timetableState.asStateFlow()
+    var timetable: Timetable? = null
+
+    private val _timetableState = MutableStateFlow<TimetableState?>(TimetableState.Idle)
+    val timetableState: StateFlow<TimetableState?> = _timetableState.asStateFlow()
 
     fun getTimeTable(file: File) {
+        _timetableState.value = TimetableState.Loading
         viewModelScope.launch {
             try {
-                Log.d("HomeViewModel", "Uploading file: ${file.name}")  // Debugging
+                Log.d(TAG, "Uploading file: ${file.name}")  // Debugging
                 val response = timetableRepository.getTimeTable(file)
                 if (response.isSuccessful) {
-                    _timetableState.value = response.body()
-                    Log.d("HomeViewModel", "Response Success: ${response.body()}")
+                    timetable = response.body()
+                    _timetableState.value = TimetableState.Success
+                    Log.d(TAG, "Response Success: ${response.body()}")
                 } else {
-                    Log.e("HomeViewModel", "Response Error: ${response.errorBody()?.string()}")
-                    _timetableState.value = null
+                    Log.e(TAG, "Response Error: ${response.errorBody()?.string()}")
+                    _timetableState.value = TimetableState.Error(response.errorBody().toString())
                 }
             } catch (e: Exception) {
-                Log.e("HomeViewModel", "Exception: ${e.message}", e)
-                _timetableState.value = null
+                Log.e(TAG, "Exception: ${e.message}", e)
+                _timetableState.value = TimetableState.Error(e.message.toString())
             }
         }
     }
 
-    fun getTimeTableDayWise(day:String):List<SubjectSchedule>?{
-        if(timetableState.value!=null){
-            return timetableState.value?.getDaySchedule(day.lowercase())
-
-        }
-        else return null
+    fun resetState(){
+        _timetableState.value = TimetableState.Idle
     }
 
+    fun getTimeTableDayWise(day:String):List<SubjectSchedule>?{
+
+        return if(timetableState.value!=null)
+            timetable?.getDaySchedule(day.lowercase())
+        else
+            null
+    }
+
+    companion object{
+        const val TAG = "HomeViewModel"
+    }
+
+}
+
+sealed class TimetableState {
+    data object Idle : TimetableState()
+    data object Loading : TimetableState()
+    data object Success : TimetableState()
+    data class Error(val message: String = "Something went wrong") : TimetableState()
 }

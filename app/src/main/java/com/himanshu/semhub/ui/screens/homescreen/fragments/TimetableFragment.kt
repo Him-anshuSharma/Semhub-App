@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,11 +24,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.himanshu.semhub.data.model.timetable.SubjectSchedule
 import com.himanshu.semhub.ui.screens.homescreen.components.TimeTableCard
 import com.himanshu.semhub.utils.getCurrentDay
 import com.himanshu.semhub.utils.uriToFile
 import com.himanshu.semhub.viewmodel.timetable.TimeTableViewModel
-
+import com.himanshu.semhub.viewmodel.timetable.TimetableState
+import java.sql.Time
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -35,65 +38,72 @@ fun Timetable(
     timeTableViewModel: TimeTableViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+
+    // Observing timetable state from ViewModel
     val timetableState by timeTableViewModel.timetableState.collectAsState()
+
+    // Convert fileUri into Compose state
     val fileUri = remember { mutableStateOf<Uri?>(null) }
+
+    // Derived state: Determines if the upload button should be visible
+    val uploadButtonVisible = remember { derivedStateOf { timetableState == TimetableState.Idle } }.value
+
+    // Derived state: Extract subject list when timetable is available
+    val subjectList by remember {
+        derivedStateOf {
+            if (timetableState is TimetableState.Success) {
+                timeTableViewModel.getTimeTableDayWise(getCurrentDay())?.toList()
+            } else {
+                null
+            }
+        }
+    }
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         fileUri.value = uri
     }
 
-    //observe URI
+    // Observe fileUri changes and process the file
     LaunchedEffect(fileUri.value) {
         fileUri.value?.let { uri ->
-            Log.d("Timetable", "File selected: $uri")
             val file = uriToFile(context, uri)
-            file?.let {
-                Log.d("Timetable", "Converted file: ${it.name}")
-                timeTableViewModel.getTimeTable(it)
-            }
+            file?.let { timeTableViewModel.getTimeTable(it) }
         }
     }
-
 
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if(timetableState == null){
-            Text(text = "No Timetable Available")
-            Button(onClick = {
-                launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            }) {
-                Text("Upload")
+        if (subjectList.isNullOrEmpty()) {
+            Text(
+                text = when (timetableState) {
+                    is TimetableState.Error -> (timetableState as TimetableState.Error).message
+                    else -> "No Timetable Available"
+                }
+            )
+            if (uploadButtonVisible) {
+                Button(onClick = { launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }) {
+                    Text("Upload File")
+                }
             }
-        }
-        else{
-            val today = getCurrentDay()
-            Log.d("anshu",today)// Function should return a string like "Monday"
-            val subjectList = timeTableViewModel.getTimeTableDayWise(today)
+            else{
+                Button(onClick = {
+                    timeTableViewModel.resetState()
+                    fileUri.value = null
 
-            Log.d("anshu",subjectList.toString())
-
-            if (subjectList.isNullOrEmpty()) {
-                Text(text = "No classes today.")
-            } else {
-                // Show Timetable in LazyColumn
-                LazyColumn {
-                    items(
-                        count = subjectList.size,
-                        itemContent = { index ->
-                            val time = subjectList[index].time
-                            val subject = subjectList[index].subject
-                            TimeTableCard(time = time, subject = subject)
-                        }
-                    )
+                }) {
+                    Text("Retry")
+                }
+            }
+        } else {
+            LazyColumn {
+                items(subjectList!!.size) { index ->
+                    val subject = subjectList!![index]
+                    TimeTableCard(time = subject.time, subject = subject.subject)
                 }
             }
         }
     }
 }
-
-
-
-
