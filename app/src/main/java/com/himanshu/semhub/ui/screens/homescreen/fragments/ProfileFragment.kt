@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.himanshu.semhub.viewmodel.auth.AuthViewModel
+import com.himanshu.semhub.ui.viewmodel.auth.AuthViewModel
 
 @Composable
 fun Profile(

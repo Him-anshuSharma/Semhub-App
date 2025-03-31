@@ -2,7 +2,10 @@ package com.himanshu.semhub.di
 
 import android.content.Context
 import androidx.credentials.CredentialManager
+import androidx.room.Room
 import com.himanshu.semhub.R
+import com.himanshu.semhub.data.local.AppDatabase
+import com.himanshu.semhub.data.local.timetable.TimetableDao
 import com.himanshu.semhub.data.remote.ApiService
 import com.himanshu.semhub.data.repository.AuthRepository
 import com.himanshu.semhub.data.repository.TimetableRepository
@@ -21,7 +24,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    val logging = HttpLoggingInterceptor().apply {
+    private val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY // Logs request and response body
     }
 
@@ -57,14 +60,23 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
+        Room.databaseBuilder(context, AppDatabase::class.java, "app_db").build()
+
+    @Provides
+    @Singleton
+    fun provideTimetableDao(db: AppDatabase): TimetableDao = db.timetableDao()
+
+    @Provides
+    @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideTimetableRepository(apiService: ApiService): TimetableRepository {
-        return TimetableRepository(apiService)
+    fun provideTimetableRepository(apiService: ApiService,timetableDao: TimetableDao): TimetableRepository {
+        return TimetableRepository(apiService,timetableDao)
     }
 
 }

@@ -28,8 +28,8 @@ import com.himanshu.semhub.data.model.timetable.SubjectSchedule
 import com.himanshu.semhub.ui.screens.homescreen.components.TimeTableCard
 import com.himanshu.semhub.utils.getCurrentDay
 import com.himanshu.semhub.utils.uriToFile
-import com.himanshu.semhub.viewmodel.timetable.TimeTableViewModel
-import com.himanshu.semhub.viewmodel.timetable.TimetableState
+import com.himanshu.semhub.ui.viewmodel.timetable.TimeTableViewModel
+import com.himanshu.semhub.ui.viewmodel.timetable.TimetableState
 import java.sql.Time
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -37,6 +37,7 @@ import java.sql.Time
 fun Timetable(
     timeTableViewModel: TimeTableViewModel = hiltViewModel()
 ) {
+
     val context = LocalContext.current
 
     // Observing timetable state from ViewModel

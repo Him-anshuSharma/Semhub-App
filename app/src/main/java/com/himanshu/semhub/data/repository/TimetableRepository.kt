@@ -2,6 +2,8 @@ package com.himanshu.semhub.data.repository
 
 import com.himanshu.semhub.data.model.timetable.Timetable
 import android.util.Log
+import com.himanshu.semhub.data.local.timetable.TimetableDao
+import com.himanshu.semhub.data.model.timetable.SubjectSchedule
 import com.himanshu.semhub.data.remote.ApiService
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -9,9 +11,13 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
 import java.io.File
+import java.sql.Time
 import javax.inject.Inject
 
-class TimetableRepository @Inject constructor(private val apiService: ApiService) {
+class TimetableRepository @Inject constructor(private val apiService: ApiService, private val timetableDao: TimetableDao) {
+
+    suspend fun ifTimeTableExists():Timetable? = timetableDao.getTimeTable()
+
     suspend fun getTimeTable(file: File): Response<Timetable> {
         val mediaType = when {
             file.name.endsWith(".jpg") || file.name.endsWith(".jpeg") -> "image/jpeg"
@@ -31,5 +37,9 @@ class TimetableRepository @Inject constructor(private val apiService: ApiService
         val res =  apiService.uploadFile(multipartFile)
         return res
     }
+
+    suspend fun saveTimeTable(timetable: Timetable) = timetableDao.insertTimetable(timetable)
+
+
 }
 

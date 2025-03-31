@@ -34,8 +34,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.himanshu.semhub.R
 import com.himanshu.semhub.ui.screens.login.components.GoogleSignInButton
-import com.himanshu.semhub.viewmodel.auth.AuthViewModel
-import com.himanshu.semhub.viewmodel.auth.LoginState
+import com.himanshu.semhub.ui.viewmodel.auth.AuthViewModel
+import com.himanshu.semhub.ui.viewmodel.auth.LoginState
 
 //
 //@Composable
