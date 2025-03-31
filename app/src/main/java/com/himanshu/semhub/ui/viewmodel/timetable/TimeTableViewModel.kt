@@ -19,14 +19,18 @@ class TimeTableViewModel @Inject constructor(
     private val timetableRepository: TimetableRepository
 ) : ViewModel() {
 
-    private val _timetableState = MutableStateFlow<TimetableState?>(TimetableState.Idle)
-    val timetableState: StateFlow<TimetableState?> = _timetableState.asStateFlow()
+    private val _timetableState = MutableStateFlow<TimetableState>(TimetableState.Idle)
+    val timetableState: StateFlow<TimetableState> = _timetableState.asStateFlow()
 
+    private var timetable: Timetable? = null  // Cached timetable to avoid redundant calls
+
+    init {
+        ifTimeTableExists() // Load timetable when ViewModel is created
+    }
 
     fun ifTimeTableExists() {
-        _timetableState.value = TimetableState.Loading
-        if (timetable != null) {  // Prevent redundant API call
-            _timetableState.value = TimetableState.Success
+        if (timetable != null) {
+            _timetableState.value = TimetableState.Success  // Avoid unnecessary DB call
             return
         }
 
@@ -39,7 +43,7 @@ class TimeTableViewModel @Inject constructor(
     }
 
     fun getTimeTable(file: File) {
-        if (timetable != null) {  // If timetable already exists, avoid API call
+        if (timetable != null) {  // Skip API call if already fetched
             Log.d(TAG, "Timetable already exists, skipping API call.")
             return
         }
@@ -49,50 +53,57 @@ class TimeTableViewModel @Inject constructor(
             try {
                 Log.d(TAG, "Uploading file: ${file.name}")
                 val response = timetableRepository.getTimeTable(file)
+
                 if (response.isSuccessful) {
                     timetable = response.body()
-                    Log.d(TAG,"Saving timetable")
-                    timetable?.let { timetableRepository.saveTimeTable(it) }
+                    timetable?.let {
+                        Log.d(TAG, "Saving timetable")
+                        timetableRepository.saveTimeTable(it)
+                    }
                     _timetableState.value = TimetableState.Success
-                    Log.d(TAG, "Response Success: ${response.body()}")
                 } else {
-                    Log.e(TAG, "Response Error: ${response.errorBody()?.string()}")
-                    _timetableState.value = TimetableState.Error(response.errorBody().toString())
+                    handleError(response.errorBody()?.string())
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Exception: ${e.message}", e)
-                _timetableState.value = TimetableState.Error(e.message.toString())
+                handleError(e.message)
             }
         }
     }
 
     fun resetState() {
         _timetableState.value = TimetableState.Idle
-        ifTimeTableExists()
+        ifTimeTableExists() // Recheck if timetable exists after resetting state
     }
 
     fun getTimeTableDayWise(day: String): List<SubjectSchedule>? {
-        val currentTimetable = timetable ?: return null
+        return timetable?.getScheduleForDay(day)
+    }
 
-        val daySchedule: List<List<String>> = when (day.lowercase()) {
-            "monday" -> currentTimetable.Monday
-            "tuesday" -> currentTimetable.Tuesday
-            "wednesday" -> currentTimetable.Wednesday
-            "thursday" -> currentTimetable.Thursday
-            "friday" -> currentTimetable.Friday
-            "saturday" -> currentTimetable.Saturday
-            "sunday" -> currentTimetable.Sunday
+    private fun Timetable.getScheduleForDay(day: String): List<SubjectSchedule> {
+        val schedule = when (day.lowercase()) {
+            "monday" -> Monday
+            "tuesday" -> Tuesday
+            "wednesday" -> Wednesday
+            "thursday" -> Thursday
+            "friday" -> Friday
+            "saturday" -> Saturday
+            "sunday" -> Sunday
             else -> emptyList()
         }
+        return schedule.map { SubjectSchedule(it[0], it[1]) }
+    }
 
-        return daySchedule.map { SubjectSchedule(it[0], it[1]) }
+    private fun handleError(message: String?) {
+        val errorMsg = message ?: "Something went wrong"
+        Log.e(TAG, "Error: $errorMsg")
+        _timetableState.value = TimetableState.Error(errorMsg)
     }
 
     companion object {
-        const val TAG = "TimetableViewModel"
-        var timetable: Timetable? = null
+        private const val TAG = "TimetableViewModel"
     }
 }
+
 
 sealed class TimetableState {
     data object Idle : TimetableState()

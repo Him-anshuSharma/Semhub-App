@@ -12,7 +12,6 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,7 +27,6 @@ import com.himanshu.semhub.ui.screens.homescreen.fragments.Timetable
 fun HomeScreen(){
     val bottomNavController = rememberNavController()
     Scaffold(
-
         bottomBar = {
             BottomAppBar(
                 containerColor = Color(0x00FF0000),
@@ -64,7 +62,7 @@ fun HomeScreen(){
     ) { paddingValues ->
         NavHost(
             navController = bottomNavController,
-            startDestination = "profile",
+            startDestination = "timetable",
             modifier = Modifier.padding(paddingValues)
         ) {
             composable("profile") { Profile() }
