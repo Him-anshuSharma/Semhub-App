@@ -11,7 +11,7 @@ interface TimetableDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTimetable(timetable: Timetable)
 
-    @Query("SELECT * FROM timetable_semhub WHERE id = 1")
+    @Query("SELECT * FROM timetable_semhub LIMIT 1")
     suspend fun getTimeTable(): Timetable?
 
     @Query("DELETE FROM timetable_semhub")

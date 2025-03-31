@@ -19,38 +19,40 @@ class TimeTableViewModel @Inject constructor(
     private val timetableRepository: TimetableRepository
 ) : ViewModel() {
 
-
-    var timetable: Timetable? = null
-
     private val _timetableState = MutableStateFlow<TimetableState?>(TimetableState.Idle)
     val timetableState: StateFlow<TimetableState?> = _timetableState.asStateFlow()
 
-    init {
-        ifTimeTableExists()  // Call immediately when the ViewModel is created
-    }
 
-    private fun ifTimeTableExists() {
+    fun ifTimeTableExists() {
+        _timetableState.value = TimetableState.Loading
+        if (timetable != null) {  // Prevent redundant API call
+            _timetableState.value = TimetableState.Success
+            return
+        }
+
         _timetableState.value = TimetableState.Loading
         viewModelScope.launch {
             timetable = timetableRepository.ifTimeTableExists()
-            if (timetable != null) {
-                _timetableState.value = TimetableState.Success
-            } else {
-                _timetableState.value = TimetableState.Idle
-            }
+            Log.d(TAG, "Timetable Exists: $timetable")
+            _timetableState.value = if (timetable != null) TimetableState.Success else TimetableState.Idle
         }
     }
 
     fun getTimeTable(file: File) {
+        if (timetable != null) {  // If timetable already exists, avoid API call
+            Log.d(TAG, "Timetable already exists, skipping API call.")
+            return
+        }
+
         _timetableState.value = TimetableState.Loading
         viewModelScope.launch {
             try {
-                Log.d(TAG, "Uploading file: ${file.name}")  // Debugging
+                Log.d(TAG, "Uploading file: ${file.name}")
                 val response = timetableRepository.getTimeTable(file)
                 if (response.isSuccessful) {
                     timetable = response.body()
-                    val currentTimeTable = timetable
-                    if (currentTimeTable != null) timetableRepository.saveTimeTable(currentTimeTable)
+                    Log.d(TAG,"Saving timetable")
+                    timetable?.let { timetableRepository.saveTimeTable(it) }
                     _timetableState.value = TimetableState.Success
                     Log.d(TAG, "Response Success: ${response.body()}")
                 } else {
@@ -66,30 +68,30 @@ class TimeTableViewModel @Inject constructor(
 
     fun resetState() {
         _timetableState.value = TimetableState.Idle
+        ifTimeTableExists()
     }
 
     fun getTimeTableDayWise(day: String): List<SubjectSchedule>? {
-        val currentTimetable = timetable
+        val currentTimetable = timetable ?: return null
 
-        return if (timetableState.value != null && currentTimetable != null) {
-            val daySchedule: List<List<String>> = when (day.lowercase()) {
-                "monday" -> currentTimetable.Monday
-                "tuesday" -> currentTimetable.Tuesday
-                "wednesday" -> currentTimetable.Wednesday
-                "thursday" -> currentTimetable.Thursday
-                "friday" -> currentTimetable.Friday
-                "saturday" -> currentTimetable.Saturday
-                "sunday" -> currentTimetable.Sunday
-                else -> emptyList()
-            }
-            daySchedule.map { SubjectSchedule(it[0], it[1]) }
-        } else null
+        val daySchedule: List<List<String>> = when (day.lowercase()) {
+            "monday" -> currentTimetable.Monday
+            "tuesday" -> currentTimetable.Tuesday
+            "wednesday" -> currentTimetable.Wednesday
+            "thursday" -> currentTimetable.Thursday
+            "friday" -> currentTimetable.Friday
+            "saturday" -> currentTimetable.Saturday
+            "sunday" -> currentTimetable.Sunday
+            else -> emptyList()
+        }
+
+        return daySchedule.map { SubjectSchedule(it[0], it[1]) }
     }
 
     companion object {
-        const val TAG = "HomeViewModel"
+        const val TAG = "TimetableViewModel"
+        var timetable: Timetable? = null
     }
-
 }
 
 sealed class TimetableState {
