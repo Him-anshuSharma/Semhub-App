@@ -24,14 +24,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.himanshu.semhub.data.model.timetable.SubjectSchedule
-import com.himanshu.semhub.data.model.timetable.Timetable
 import com.himanshu.semhub.ui.screens.homescreen.components.TimeTableCard
-import com.himanshu.semhub.utils.getCurrentDay
-import com.himanshu.semhub.utils.uriToFile
 import com.himanshu.semhub.ui.viewmodel.timetable.TimeTableViewModel
 import com.himanshu.semhub.ui.viewmodel.timetable.TimetableState
-import java.sql.Time
+import com.himanshu.semhub.utils.getCurrentDay
+import com.himanshu.semhub.utils.uriToFile
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable

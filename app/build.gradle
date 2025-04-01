@@ -40,6 +40,8 @@ android {
 }
 
 dependencies {
+    implementation libs.androidx.media3.common.ktx
+
     //room
     def room_version = "2.6.1"
 
