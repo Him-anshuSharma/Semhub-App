@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.himanshu.semhub.ui.viewmodel.timetable.TimeTableViewModel
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -32,7 +33,8 @@ import kotlin.math.sin
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RotatingWheel(
-    timeTableViewModel: TimeTableViewModel = hiltViewModel()
+    timeTableViewModel: TimeTableViewModel,
+    navController: NavHostController
 ) {
     val n = 7
     val radius = 102.86f
@@ -68,8 +70,9 @@ fun RotatingWheel(
                         .fillMaxSize()
                     ,
                     onClick = {
-                        Log.d("RotatingWheel", "Clicked on ${i + 1}")
-                        timeTableViewModel.updateSelectedDay(daysOfWeek[i])
+                        Log.d("RotatingWheel", "Clicked on ${daysOfWeek[i]}")
+                        timeTableViewModel.updateSelectedDay(getDay(daysOfWeek[i]).lowercase())
+                        navController.navigate("timetable")
                     }
                 ) {
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
@@ -86,8 +89,14 @@ fun RotatingWheel(
 
 fun Float.toRadians(): Float = (this * PI / 180).toFloat()
 
-@Preview
-@Composable
-fun PreviewRotatingWheel() {
-    RotatingWheel()
+fun getDay(day:String):String{
+    return when(day){
+        "Sun" -> return "Sunday"
+        "Tue" -> return "Tuesday"
+        "Wed" -> return "Wednesday"
+        "Thu" -> return "Thursday"
+        "Fri" -> return "Friday"
+        "Sat" -> return "Saturday"
+        else -> "Monday"
+    }
 }

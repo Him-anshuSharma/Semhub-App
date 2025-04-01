@@ -23,7 +23,7 @@ class TimeTableViewModel @Inject constructor(
     private val timetableRepository: TimetableRepository
 ) : ViewModel() {
 
-    private val _selectedDay = MutableStateFlow<String>(getCurrentDay())
+    private val _selectedDay = MutableStateFlow(getCurrentDay())
     val selectedDay = _selectedDay.asStateFlow()
 
     private val _timetableState = MutableStateFlow<TimetableState>(TimetableState.Idle)
@@ -82,8 +82,8 @@ class TimeTableViewModel @Inject constructor(
         ifTimeTableExists() // Recheck if timetable exists after resetting state
     }
 
-    fun getTimeTableDayWise(day: String): List<SubjectSchedule>? {
-        return timetable?.getScheduleForDay(day)
+    fun getTimeTableDayWise(): List<SubjectSchedule>? {
+        return timetable?.getScheduleForDay(selectedDay.value)
     }
 
     fun updateSelectedDay(day: String){

@@ -17,15 +17,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.himanshu.semhub.ui.screens.homescreen.components.RotatingWheel
 import com.himanshu.semhub.ui.screens.homescreen.fragments.Profile
 import com.himanshu.semhub.ui.screens.homescreen.fragments.Timetable
+import com.himanshu.semhub.ui.viewmodel.timetable.TimeTableViewModel
 
 @Composable
 fun HomeScreen(){
     val bottomNavController = rememberNavController()
+    val viewModel: TimeTableViewModel = hiltViewModel()
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -66,7 +70,8 @@ fun HomeScreen(){
             modifier = Modifier.padding(paddingValues)
         ) {
             composable("profile") { Profile() }
-            composable("timetable") { Timetable() }
+            composable("timetable") { Timetable(viewModel,bottomNavController) }
+            composable("cards") { RotatingWheel(viewModel,bottomNavController) }
         }
     }
 }

@@ -7,6 +7,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,8 +23,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.himanshu.semhub.ui.screens.homescreen.components.TimeTableCard
 import com.himanshu.semhub.ui.viewmodel.timetable.TimeTableViewModel
 import com.himanshu.semhub.ui.viewmodel.timetable.TimetableState
@@ -33,25 +35,22 @@ import com.himanshu.semhub.utils.uriToFile
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Timetable(
-    timeTableViewModel: TimeTableViewModel = hiltViewModel()
+    timeTableViewModel: TimeTableViewModel,
+    navController: NavHostController
 ) {
     val TAG = "TimeTableFragment"
     val context = LocalContext.current
 
-    // Observing timetable state from ViewModel
     val timetableState by timeTableViewModel.timetableState.collectAsState()
 
-    // Convert fileUri into Compose state
     val fileUri = remember { mutableStateOf<Uri?>(null) }
 
-    // Derived state: Determines if the upload button should be visible
     val uploadButtonVisible by remember { derivedStateOf { timetableState == TimetableState.Idle } }
 
-    // Derived state: Extract subject list when timetable is available
     val subjectList by remember {
         derivedStateOf {
             if (timetableState is TimetableState.Success) {
-                timeTableViewModel.getTimeTableDayWise(getCurrentDay())
+                timeTableViewModel.getTimeTableDayWise()
             } else null
         }
     }
@@ -62,12 +61,10 @@ fun Timetable(
 
 
 
-    // Check if timetable already exists when the Composable loads
     LaunchedEffect(Unit) {
         timeTableViewModel.ifTimeTableExists()
     }
 
-    // Observe fileUri changes and process the file
     LaunchedEffect(fileUri.value) {
         fileUri.value?.let { uri ->
             val file = uriToFile(context, uri)
@@ -77,8 +74,16 @@ fun Timetable(
         }
     }
 
+    val swipeUpModifier = Modifier.pointerInput(Unit) {
+        detectVerticalDragGestures { _, dragAmount ->
+            if (dragAmount < 0) {
+                navController.navigate("cards")
+            }
+        }
+    }
+
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().then(swipeUpModifier),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
