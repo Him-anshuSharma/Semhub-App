@@ -1,6 +1,6 @@
 package com.himanshu.semhub
 
-import android.util.Log
+import com.himanshu.semhub.data.local.timetable.TimetableDao
 import com.himanshu.semhub.data.remote.ApiService
 import com.himanshu.semhub.data.repository.TimetableRepository
 import junit.framework.TestCase.assertEquals
@@ -11,6 +11,7 @@ import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito.mock
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
@@ -20,17 +21,18 @@ class TimetableRepositoryTest {
     private lateinit var mockWebServer: MockWebServer
     private lateinit var apiService: ApiService
     private lateinit var repository: TimetableRepository
+    private val mockTimetableDao = mock(TimetableDao::class.java) // Mocked DAO
 
     @Before
     fun setup() {
         mockWebServer = MockWebServer()
         apiService = Retrofit.Builder()
-            .baseUrl(mockWebServer.url("/")) // Simulating API
+            .baseUrl(mockWebServer.url("/"))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiService::class.java)
 
-        repository = TimetableRepository(apiService)
+        repository = TimetableRepository(apiService, mockTimetableDao) // Pass mock DAO
     }
 
     @Test
@@ -49,7 +51,7 @@ class TimetableRepositoryTest {
         val response = repository.getTimeTable(file)
         println()
         println()
-        println(response.body()?.monday.toString())
+        println(response.body()?.toString())
         println()
         println()
         assertEquals(true, response.isSuccessful)
@@ -62,7 +64,7 @@ class TimetableRepositoryTest {
     }
 
     companion object{
-        val TAG = "Timetable testing"
+        const val TAG = "Timetable testing"
     }
 
 
