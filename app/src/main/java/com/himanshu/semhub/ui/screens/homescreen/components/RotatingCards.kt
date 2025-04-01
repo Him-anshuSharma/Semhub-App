@@ -1,6 +1,8 @@
 package com.himanshu.semhub.ui.screens.homescreen.components
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +29,7 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RotatingWheel(
     timeTableViewModel: TimeTableViewModel = hiltViewModel()
@@ -34,6 +37,8 @@ fun RotatingWheel(
     val n = 7
     val radius = 102.86f
     var rotationAngle by remember { mutableFloatStateOf(0f) }
+
+    val daysOfWeek = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
 
     Box(
         modifier = Modifier
@@ -63,12 +68,13 @@ fun RotatingWheel(
                         .fillMaxSize()
                     ,
                     onClick = {
-                        Log.d("com.himanshu.semhub.ui.screens.homescreen.components.RotatingWheel", "Clicked on ${i + 1}")
+                        Log.d("RotatingWheel", "Clicked on ${i + 1}")
+                        timeTableViewModel.updateSelectedDay(daysOfWeek[i])
                     }
                 ) {
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                         Text(
-                            text = "${i + 1}",
+                            text = daysOfWeek[i],
                             textAlign = TextAlign.Center,
                         )
                     }

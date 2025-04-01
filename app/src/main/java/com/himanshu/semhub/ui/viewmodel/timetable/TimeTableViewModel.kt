@@ -1,11 +1,14 @@
 package com.himanshu.semhub.ui.viewmodel.timetable
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.himanshu.semhub.data.model.timetable.SubjectSchedule
 import com.himanshu.semhub.data.model.timetable.Timetable
 import com.himanshu.semhub.data.repository.TimetableRepository
+import com.himanshu.semhub.utils.getCurrentDay
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,9 +18,13 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
+@RequiresApi(Build.VERSION_CODES.O)
 class TimeTableViewModel @Inject constructor(
     private val timetableRepository: TimetableRepository
 ) : ViewModel() {
+
+    private val _selectedDay = MutableStateFlow<String>(getCurrentDay())
+    val selectedDay = _selectedDay.asStateFlow()
 
     private val _timetableState = MutableStateFlow<TimetableState>(TimetableState.Idle)
     val timetableState: StateFlow<TimetableState> = _timetableState.asStateFlow()
@@ -77,6 +84,10 @@ class TimeTableViewModel @Inject constructor(
 
     fun getTimeTableDayWise(day: String): List<SubjectSchedule>? {
         return timetable?.getScheduleForDay(day)
+    }
+
+    fun updateSelectedDay(day: String){
+        _selectedDay.value = day
     }
 
     private fun Timetable.getScheduleForDay(day: String): List<SubjectSchedule> {
