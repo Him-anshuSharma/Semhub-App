@@ -59,12 +59,6 @@ fun Timetable(
         fileUri.value = uri
     }
 
-
-
-    LaunchedEffect(Unit) {
-        timeTableViewModel.ifTimeTableExists()
-    }
-
     LaunchedEffect(fileUri.value) {
         fileUri.value?.let { uri ->
             val file = uriToFile(context, uri)
@@ -88,7 +82,6 @@ fun Timetable(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (subjectList.isNullOrEmpty()) {
-            timeTableViewModel.ifTimeTableExists()
             Text(
                 text = when (timetableState) {
                     is TimetableState.Error -> (timetableState as TimetableState.Error).message

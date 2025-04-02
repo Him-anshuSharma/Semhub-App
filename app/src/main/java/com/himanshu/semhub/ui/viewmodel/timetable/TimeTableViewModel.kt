@@ -13,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -24,70 +25,74 @@ class TimeTableViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _selectedDay = MutableStateFlow(getCurrentDay())
-    val selectedDay = _selectedDay.asStateFlow()
+    val selectedDay: StateFlow<String> = _selectedDay.asStateFlow()
 
     private val _timetableState = MutableStateFlow<TimetableState>(TimetableState.Idle)
     val timetableState: StateFlow<TimetableState> = _timetableState.asStateFlow()
 
-    private var timetable: Timetable? = null  // Cached timetable to avoid redundant calls
+    private var timetable: Timetable? = null // Cached timetable
 
     init {
-        ifTimeTableExists() // Load timetable when ViewModel is created
+        Log.d(TAG, "ViewModel initialized")
+        loadTimeTableIfExists()
     }
 
-    fun ifTimeTableExists() {
+    private fun loadTimeTableIfExists() {
+        Log.d(TAG, "Checking if timetable exists")
+
         if (timetable != null) {
-            _timetableState.value = TimetableState.Success  // Avoid unnecessary DB call
+            Log.d(TAG, "Timetable already loaded")
+            _timetableState.update { TimetableState.Success }
             return
         }
 
-        _timetableState.value = TimetableState.Loading
+        _timetableState.update { TimetableState.Loading }
         viewModelScope.launch {
             timetable = timetableRepository.ifTimeTableExists()
-            Log.d(TAG, "Timetable Exists: $timetable")
-            _timetableState.value = if (timetable != null) TimetableState.Success else TimetableState.Idle
+            Log.d(TAG, "Timetable fetch result: ${timetable != null}")
+            _timetableState.update { if (timetable != null) TimetableState.Success else TimetableState.Idle }
         }
     }
 
     fun getTimeTable(file: File) {
-        if (timetable != null) {  // Skip API call if already fetched
+        Log.d(TAG, "Fetching timetable from file: ${file.name}")
+
+        if (timetable != null) {
             Log.d(TAG, "Timetable already exists, skipping API call.")
             return
         }
 
-        _timetableState.value = TimetableState.Loading
+        _timetableState.update { TimetableState.Loading }
         viewModelScope.launch {
             try {
-                Log.d(TAG, "Uploading file: ${file.name}")
                 val response = timetableRepository.getTimeTable(file)
 
                 if (response.isSuccessful) {
-                    timetable = response.body()
-                    timetable?.let {
-                        Log.d(TAG, "Saving timetable")
-                        timetableRepository.saveTimeTable(it)
-                    }
-                    _timetableState.value = TimetableState.Success
+                    Log.d(TAG, "Timetable fetched successfully, saving...")
+                    timetable = response.body()?.also { timetableRepository.saveTimeTable(it) }
+                    _timetableState.update { TimetableState.Success }
                 } else {
                     handleError(response.errorBody()?.string())
                 }
             } catch (e: Exception) {
-                handleError(e.message)
+                handleError(e.localizedMessage)
             }
         }
     }
 
     fun resetState() {
-        _timetableState.value = TimetableState.Idle
-        ifTimeTableExists() // Recheck if timetable exists after resetting state
+        Log.d(TAG, "Resetting state to Idle")
+        _timetableState.update { TimetableState.Idle }
     }
 
     fun getTimeTableDayWise(): List<SubjectSchedule>? {
+        Log.d(TAG, "Fetching timetable for ${selectedDay.value}")
         return timetable?.getScheduleForDay(selectedDay.value)
     }
 
-    fun updateSelectedDay(day: String){
-        _selectedDay.value = day
+    fun updateSelectedDay(day: String) {
+        Log.d(TAG, "Selected day updated: $day")
+        _selectedDay.update { day }
     }
 
     private fun Timetable.getScheduleForDay(day: String): List<SubjectSchedule> {
@@ -101,20 +106,19 @@ class TimeTableViewModel @Inject constructor(
             "sunday" -> Sunday
             else -> emptyList()
         }
-        return schedule.map { SubjectSchedule(it[0], it[1]) }
+        return schedule.mapNotNull { it.takeIf { it.size >= 2 }?.let { SubjectSchedule(it[0], it[1]) } }
     }
 
     private fun handleError(message: String?) {
         val errorMsg = message ?: "Something went wrong"
         Log.e(TAG, "Error: $errorMsg")
-        _timetableState.value = TimetableState.Error(errorMsg)
+        _timetableState.update { TimetableState.Error(errorMsg) }
     }
 
     companion object {
         private const val TAG = "TimetableViewModel"
     }
 }
-
 
 sealed class TimetableState {
     data object Idle : TimetableState()
