@@ -3,21 +3,19 @@ package com.himanshu.semhub.data.local.timetable.converters
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.himanshu.semhub.data.model.timetable.TimetableDays
 
 class TimetableConverter {
     private val gson = Gson()
 
     @TypeConverter
-    fun fromList(list: List<List<String>>): String {
-        return gson.toJson(list)
-
+    fun fromTimetableDays(days: TimetableDays): String {
+        return gson.toJson(days)
     }
 
     @TypeConverter
-    fun toList(json: String): List<List<String>> {
-        val type = object : TypeToken<List<List<String>>>() {}.type
-        println(type)
+    fun toTimetableDays(json: String): TimetableDays {
+        val type = object : TypeToken<TimetableDays>() {}.type
         return gson.fromJson(json, type)
-
     }
 }

@@ -48,7 +48,9 @@ class TimetableRepositoryTest {
 
         val file = File("src/test/resources/timetable.jpeg")
 
-        val response = repository.getTimeTable(file)
+        val uid = "0"
+
+        val response = repository.getTimeTable(file,uid)
         println()
         println()
         println(response.body()?.toString())

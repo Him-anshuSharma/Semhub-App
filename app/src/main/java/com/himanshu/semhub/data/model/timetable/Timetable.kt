@@ -10,16 +10,21 @@ import com.himanshu.semhub.data.local.timetable.converters.TimetableConverter
 data class Timetable(
     @PrimaryKey
     val id: Int = 1,
-    val Monday: List<List<String>>,
-    val Tuesday: List<List<String>>,
-    val Wednesday: List<List<String>>,
-    val Thursday: List<List<String>>,
-    val Friday: List<List<String>>,
-    val Saturday: List<List<String>>,
-    val Sunday: List<List<String>>
+    val days: TimetableDays
+)
+
+data class TimetableDays(
+    val Monday: List<SubjectSchedule>,
+    val Tuesday: List<SubjectSchedule>,
+    val Wednesday: List<SubjectSchedule>,
+    val Thursday: List<SubjectSchedule>,
+    val Friday: List<SubjectSchedule>,
+    val Saturday: List<SubjectSchedule>,
+    val Sunday: List<SubjectSchedule>
 )
 
 data class SubjectSchedule(
     val time: String,
     val subject: String
 )
+

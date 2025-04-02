@@ -36,11 +36,11 @@ fun RotatingWheel(
     timeTableViewModel: TimeTableViewModel,
     navController: NavHostController
 ) {
-    val n = 7
+    val n = 5
     val radius = 102.86f
     var rotationAngle by remember { mutableFloatStateOf(0f) }
 
-    val daysOfWeek = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+    val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri")
 
     Box(
         modifier = Modifier
@@ -91,12 +91,10 @@ fun Float.toRadians(): Float = (this * PI / 180).toFloat()
 
 fun getDay(day:String):String{
     return when(day){
-        "Sun" -> return "Sunday"
         "Tue" -> return "Tuesday"
         "Wed" -> return "Wednesday"
         "Thu" -> return "Thursday"
         "Fri" -> return "Friday"
-        "Sat" -> return "Saturday"
         else -> "Monday"
     }
 }

@@ -4,9 +4,11 @@ import android.util.Log
 import com.himanshu.semhub.data.local.timetable.TimetableDao
 import com.himanshu.semhub.data.model.timetable.Timetable
 import com.himanshu.semhub.data.remote.ApiService
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
 import java.io.File
@@ -16,7 +18,7 @@ class TimetableRepository @Inject constructor(private val apiService: ApiService
 
     suspend fun ifTimeTableExists():Timetable? = timetableDao.getTimeTable()
 
-    suspend fun getTimeTable(file: File): Response<Timetable> {
+    suspend fun getTimeTable(file: File, id: String): Response<Timetable> {
         val mediaType = when {
             file.name.endsWith(".jpg") || file.name.endsWith(".jpeg") -> "image/jpeg"
             file.name.endsWith(".png") -> "image/png"
@@ -31,8 +33,10 @@ class TimetableRepository @Inject constructor(private val apiService: ApiService
         val requestBody = file.asRequestBody(mediaType.toMediaTypeOrNull())
         val multipartFile = MultipartBody.Part.createFormData("file", file.name, requestBody)
 
+        val idBody = id.toRequestBody("text/plain".toMediaType())
+
         Log.d("TimetableRepository", "Calling API with file: ${file.name}")
-        val res =  apiService.uploadFile(multipartFile)
+        val res =  apiService.uploadFile(multipartFile,idBody)
         return res
     }
 

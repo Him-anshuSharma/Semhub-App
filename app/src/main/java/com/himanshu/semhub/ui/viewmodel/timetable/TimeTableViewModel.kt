@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.himanshu.semhub.data.model.timetable.SubjectSchedule
 import com.himanshu.semhub.data.model.timetable.Timetable
+import com.himanshu.semhub.data.repository.AuthRepository
 import com.himanshu.semhub.data.repository.TimetableRepository
 import com.himanshu.semhub.utils.getCurrentDay
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,11 +22,14 @@ import javax.inject.Inject
 @HiltViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 class TimeTableViewModel @Inject constructor(
+    authRepository: AuthRepository,
     private val timetableRepository: TimetableRepository
 ) : ViewModel() {
 
     private val _selectedDay = MutableStateFlow(getCurrentDay())
     val selectedDay: StateFlow<String> = _selectedDay.asStateFlow()
+
+    private val uid = authRepository.getCurrentUser()?.uid
 
     private val _timetableState = MutableStateFlow<TimetableState>(TimetableState.Idle)
     val timetableState: StateFlow<TimetableState> = _timetableState.asStateFlow()
@@ -65,7 +69,7 @@ class TimeTableViewModel @Inject constructor(
         _timetableState.update { TimetableState.Loading }
         viewModelScope.launch {
             try {
-                val response = timetableRepository.getTimeTable(file)
+                val response = timetableRepository.getTimeTable(file,uid.toString())
 
                 if (response.isSuccessful) {
                     Log.d(TAG, "Timetable fetched successfully, saving...")
@@ -86,8 +90,15 @@ class TimeTableViewModel @Inject constructor(
     }
 
     fun getTimeTableDayWise(): List<SubjectSchedule>? {
-        Log.d(TAG, "Fetching timetable for ${selectedDay.value}")
-        return timetable?.getScheduleForDay(selectedDay.value)
+        val schedule = when(selectedDay.value.lowercase()){
+            "monday" -> timetable?.days?.Monday
+            "tuesday" -> timetable?.days?.Tuesday
+            "wednesday" -> timetable?.days?.Wednesday
+            "thursday" -> timetable?.days?.Thursday
+            "friday" -> timetable?.days?.Friday
+            else -> emptyList()
+        }
+        return schedule
     }
 
     fun updateSelectedDay(day: String) {
@@ -95,19 +106,7 @@ class TimeTableViewModel @Inject constructor(
         _selectedDay.update { day }
     }
 
-    private fun Timetable.getScheduleForDay(day: String): List<SubjectSchedule> {
-        val schedule = when (day.lowercase()) {
-            "monday" -> Monday
-            "tuesday" -> Tuesday
-            "wednesday" -> Wednesday
-            "thursday" -> Thursday
-            "friday" -> Friday
-            "saturday" -> Saturday
-            "sunday" -> Sunday
-            else -> emptyList()
-        }
-        return schedule.mapNotNull { it.takeIf { it.size >= 2 }?.let { SubjectSchedule(it[0], it[1]) } }
-    }
+
 
     private fun handleError(message: String?) {
         val errorMsg = message ?: "Something went wrong"
