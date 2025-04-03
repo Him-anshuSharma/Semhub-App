@@ -22,6 +22,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.himanshu.semhub.ui.screens.homescreen.components.RotatingWheel
+import com.himanshu.semhub.ui.screens.homescreen.fragments.ChatFragment
 import com.himanshu.semhub.ui.screens.homescreen.fragments.Profile
 import com.himanshu.semhub.ui.screens.homescreen.fragments.Timetable
 import com.himanshu.semhub.ui.viewmodel.timetable.TimeTableViewModel
@@ -48,7 +49,9 @@ fun HomeScreen(){
                             Icon(Icons.Filled.DateRange, "TimeTable")
                         }
                         FloatingActionButton(
-                            onClick = {}
+                            onClick = {
+                                bottomNavController.navigate("chats")
+                            }
                         ) {
                             Icon(Icons.Filled.Email, "Chat")
                         }
@@ -72,6 +75,7 @@ fun HomeScreen(){
             composable("profile") { Profile() }
             composable("timetable") { Timetable(viewModel,bottomNavController) }
             composable("cards") { RotatingWheel(viewModel,bottomNavController) }
+            composable("chats"){ ChatFragment() }
         }
     }
 }
