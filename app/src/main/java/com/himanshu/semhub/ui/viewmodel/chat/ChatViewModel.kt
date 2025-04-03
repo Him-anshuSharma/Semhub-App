@@ -38,20 +38,29 @@ class ChatViewModel @Inject constructor(val chatRepository: ChatRepository) : Vi
 
 
     fun sendMessage(message: String) {
-        _messages.value += Message(content = message, time = System.currentTimeMillis(), isUser = true)
-        conversation.append("message: $message. ")
+        _messages.value = _messages.value.toMutableList().apply {
+            add(Message(content = message, time = System.currentTimeMillis(), isUser = true))
+        }  // 🔥 Now `_messages` gets a NEW instance!
+
+        conversation.append("$message. ")
         _messageState.value = MessageState.Typing
+
         viewModelScope.launch {
             try {
                 val response = chatRepository.sendMessage(conversation.toString())
-                _messages.value += Message(content = response, time = System.currentTimeMillis(), isUser = false)
-                conversation.append("response: $response. ")
+
+                _messages.value = _messages.value.toMutableList().apply {
+                    add(Message(content = response, time = System.currentTimeMillis(), isUser = false))
+                }  // 🔥 Again, new instance ensures Compose detects the update
+
+                conversation.append("$response. ")
                 _messageState.value = MessageState.Idle
             } catch (e: Exception) {
                 _messageState.value = MessageState.Error(e.localizedMessage)
             }
         }
     }
+
 
     fun saveChat() {
         val chat = Chat(conversation = messages.value)

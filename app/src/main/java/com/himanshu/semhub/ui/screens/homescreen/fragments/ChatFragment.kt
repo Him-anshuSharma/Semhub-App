@@ -49,12 +49,13 @@ fun ChatFragment(
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val listState = rememberLazyListState()
 
-    LaunchedEffect(messages) {
-        Log.d(TAG, "messages changed: ${messages.value}")
+    LaunchedEffect(messages.value.size) {
+        Log.d("ChatFragment", "LaunchedEffect triggered, messages: $messages")
         if (messages.value.isNotEmpty()) {
-            listState.scrollToItem(messages.value.lastIndex)
+            listState.animateScrollToItem(messages.value.lastIndex)
         }
     }
+
 
     DisposableEffect(Unit) {
         onDispose {
@@ -68,7 +69,6 @@ fun ChatFragment(
                 LazyColumn(
                     modifier = Modifier.weight(1f),
                     state = listState,
-                    reverseLayout = false
                     ) {
                     items(viewModel.messages.value.size){index ->
                         val message = messages.value[index].content
