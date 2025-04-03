@@ -15,4 +15,11 @@ interface ApiService {
         @Part file: MultipartBody.Part,
         @Part("id") id : RequestBody
     ): Response<Timetable>
+
+    @Multipart
+    @POST("api/chat/send-message/")
+    suspend fun sendMessage(
+        @Part("convo") conversation: RequestBody,
+        @Part file: MultipartBody.Part? = null
+    ): Response<String>
 }

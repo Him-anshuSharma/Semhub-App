@@ -14,17 +14,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun MessageCard(message: String, left: Boolean){
+fun MessageCard(message: String, left: Boolean, color: Color = Color.LightGray){
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(5.dp)
+            .background(color = color)
         ,
+
         contentAlignment = if (left) Alignment.CenterStart else Alignment.CenterEnd
     ){
         Text(
             text = message,
-            modifier = Modifier.background(Color.LightGray).padding(horizontal = 10.dp, vertical = 2.dp)
+            modifier = Modifier.background(color).padding(horizontal = 10.dp, vertical = 2.dp)
         )
     }
 }

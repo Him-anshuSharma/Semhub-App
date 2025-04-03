@@ -8,6 +8,7 @@ import com.himanshu.semhub.data.local.AppDatabase
 import com.himanshu.semhub.data.local.timetable.TimetableDao
 import com.himanshu.semhub.data.remote.ApiService
 import com.himanshu.semhub.data.repository.AuthRepository
+import com.himanshu.semhub.data.repository.ChatRepository
 import com.himanshu.semhub.data.repository.TimetableRepository
 import dagger.Module
 import dagger.Provides
@@ -48,6 +49,19 @@ object AppModule {
         @Named("webClientId") webClientId: String
     ): AuthRepository = AuthRepository(context, credentialManager, webClientId)
 
+
+    @Provides
+    @Singleton
+    fun provideTimetableRepository(apiService: ApiService,timetableDao: TimetableDao): TimetableRepository {
+        return TimetableRepository(apiService,timetableDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideChatRepository(apiService: ApiService): ChatRepository {
+        return ChatRepository(apiService)
+    }
+
     @Provides
     @Singleton
     fun provideRetrofit(): Retrofit {
@@ -73,10 +87,5 @@ object AppModule {
         return retrofit.create(ApiService::class.java)
     }
 
-    @Provides
-    @Singleton
-    fun provideTimetableRepository(apiService: ApiService,timetableDao: TimetableDao): TimetableRepository {
-        return TimetableRepository(apiService,timetableDao)
-    }
 
 }

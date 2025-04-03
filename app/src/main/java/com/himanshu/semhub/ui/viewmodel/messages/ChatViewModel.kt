@@ -1,25 +1,42 @@
 package com.himanshu.semhub.ui.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
-import com.himanshu.semhub.data.model.message.Message
+import androidx.lifecycle.viewModelScope
+import com.himanshu.semhub.data.repository.ChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.util.Date
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ChatViewModel @Inject constructor() : ViewModel() {
-    private val _chatIds = MutableStateFlow(emptyList<String>())
-    val chatIds = _chatIds.asStateFlow()
-    private val _messages = MutableStateFlow(emptyList<Message>())
-    val messages = _messages.asStateFlow()
+class ChatViewModel @Inject constructor(val chatRepository: ChatRepository) : ViewModel() {
 
-    init {
-        _messages.value = listOf<Message>(
-            Message("Hello", Date(), true),
-            Message("Hi", Date(), false)
-        )
+    private val _messages = MutableStateFlow<List<String>>(emptyList())
+    val messages: StateFlow<List<String>> = _messages.asStateFlow()
+    private val _messageState = MutableStateFlow<MessageState>(MessageState.Idle)
+    val messageState: StateFlow<MessageState> = _messageState.asStateFlow()
+
+
+    fun sendMessage(message: String) {
+        _messages.value += message
+        _messageState.value = MessageState.Typing
+        viewModelScope.launch {
+            try {
+                val response = chatRepository.sendMessage(message)
+                _messages.value += response
+                _messageState.value = MessageState.Idle
+            } catch (e: Exception) {
+                _messageState.value = MessageState.Error(e.localizedMessage)
+            }
+        }
     }
+}
 
+
+sealed class MessageState{
+    data object Idle : MessageState()
+    data object Typing : MessageState()
+    data class Error(val message: String = "Unknown error") : MessageState()
 }
