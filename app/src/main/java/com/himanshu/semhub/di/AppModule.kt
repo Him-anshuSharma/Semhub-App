@@ -5,6 +5,7 @@ import androidx.credentials.CredentialManager
 import androidx.room.Room
 import com.himanshu.semhub.R
 import com.himanshu.semhub.data.local.AppDatabase
+import com.himanshu.semhub.data.local.chat.ChatDao
 import com.himanshu.semhub.data.local.timetable.TimetableDao
 import com.himanshu.semhub.data.remote.ApiService
 import com.himanshu.semhub.data.repository.AuthRepository
@@ -58,8 +59,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideChatRepository(apiService: ApiService): ChatRepository {
-        return ChatRepository(apiService)
+    fun provideChatRepository(apiService: ApiService,chatDao: ChatDao): ChatRepository {
+        return ChatRepository(apiService,chatDao)
     }
 
     @Provides
@@ -80,6 +81,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideTimetableDao(db: AppDatabase): TimetableDao = db.timetableDao()
+
+    @Provides
+    @Singleton
+    fun provideChatDao(db: AppDatabase): ChatDao = db.chatDao()
 
     @Provides
     @Singleton
