@@ -43,7 +43,9 @@ fun ChatFragment(
         Column {
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(viewModel.messages.value.size){index ->
-                    MessageCard(message = messages.value[index], left = true)
+                    val message = messages.value[index].content
+                    val left = !messages.value[index].isUser
+                    MessageCard(message = message, left = left)
                 }
             }
             if(messageState.value is MessageState.Typing){
