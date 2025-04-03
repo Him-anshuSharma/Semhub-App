@@ -1,6 +1,7 @@
 package com.himanshu.semhub.ui.screens.homescreen.fragments
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -27,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -81,7 +85,7 @@ fun ChatFragment(
                 }
                 else if(messageState.value is MessageState.Error){
                     val error = messageState.value as MessageState.Error
-                    MessageCard(message = error.message, left = true, color = Color.Red)
+                    Toast.makeText(LocalContext.current, error.message, Toast.LENGTH_SHORT).show()
                 }
                 Row{
                     TextField(
