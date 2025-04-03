@@ -39,7 +39,7 @@ fun ChatFragment(
     val messages = viewModel.messages.collectAsState()
     val messageState = viewModel.messageState.collectAsState()
 
-    Box(modifier = Modifier.fillMaxSize().padding(30.dp)){
+    Box(modifier = Modifier.fillMaxSize().padding(10.dp)){
         Column {
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(viewModel.messages.value.size){index ->
