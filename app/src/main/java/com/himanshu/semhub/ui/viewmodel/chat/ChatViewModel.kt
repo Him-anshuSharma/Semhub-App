@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ChatViewModel @Inject constructor(val chatRepository: ChatRepository) : ViewModel() {
+class ChatViewModel @Inject constructor(private val chatRepository: ChatRepository) : ViewModel() {
 
     private val conversation = StringBuilder()
     private val _messages = MutableStateFlow<List<Message>>(emptyList())
@@ -24,6 +24,7 @@ class ChatViewModel @Inject constructor(val chatRepository: ChatRepository) : Vi
 
     init {
         viewModelScope.launch {
+
             _messageState.value = MessageState.Loading
             val chatHistory = chatRepository.getChat()
             if(chatHistory != null){
@@ -48,10 +49,10 @@ class ChatViewModel @Inject constructor(val chatRepository: ChatRepository) : Vi
         viewModelScope.launch {
             try {
                 val response = chatRepository.sendMessage(conversation.toString())
-
                 _messages.value = _messages.value.toMutableList().apply {
                     add(Message(content = response, time = System.currentTimeMillis(), isUser = false))
-                }  // 🔥 Again, new instance ensures Compose detects the update
+                }
+                Log.d(TAG, response)
 
                 conversation.append("$response. ")
                 _messageState.value = MessageState.Idle
@@ -73,6 +74,7 @@ class ChatViewModel @Inject constructor(val chatRepository: ChatRepository) : Vi
     companion object{
         const val TAG = "ChatViewModel"
     }
+
 }
 
 

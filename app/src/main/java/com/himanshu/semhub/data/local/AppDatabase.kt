@@ -7,7 +7,7 @@ import com.himanshu.semhub.data.local.timetable.TimetableDao
 import com.himanshu.semhub.data.model.chat.Chat
 import com.himanshu.semhub.data.model.timetable.Timetable
 
-@Database(entities = [Timetable::class, Chat::class], version = 3)
+@Database(entities = [Timetable::class, Chat::class], version = 5)
 abstract class AppDatabase: RoomDatabase(){
     abstract fun timetableDao(): TimetableDao
     abstract fun chatDao(): ChatDao

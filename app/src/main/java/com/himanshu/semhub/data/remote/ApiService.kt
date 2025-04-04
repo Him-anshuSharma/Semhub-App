@@ -20,6 +20,7 @@ interface ApiService {
     @POST("api/chat/send-message/")
     suspend fun sendMessage(
         @Part("convo") conversation: RequestBody,
+        @Part("timetable") timetable: RequestBody,
         @Part file: MultipartBody.Part? = null
     ): Response<String>
 }

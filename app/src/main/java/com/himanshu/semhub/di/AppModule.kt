@@ -59,8 +59,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideChatRepository(apiService: ApiService,chatDao: ChatDao): ChatRepository {
-        return ChatRepository(apiService,chatDao)
+    fun provideChatRepository(apiService: ApiService,chatDao: ChatDao,timetableDao: TimetableDao): ChatRepository {
+        return ChatRepository(apiService,chatDao,timetableDao)
     }
 
     @Provides

@@ -2,16 +2,20 @@ package com.himanshu.semhub.data.repository
 
 import android.util.Log
 import com.himanshu.semhub.data.local.chat.ChatDao
+import com.himanshu.semhub.data.local.timetable.TimetableDao
 import com.himanshu.semhub.data.model.chat.Chat
 import com.himanshu.semhub.data.remote.ApiService
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
-class ChatRepository @Inject constructor(private val apiService: ApiService, private val chatDao: ChatDao) {
+class ChatRepository @Inject constructor(private val apiService: ApiService, private val chatDao: ChatDao, private val timetableDao: TimetableDao) {
 
     suspend fun sendMessage(message: String): String {
-        val response = apiService.sendMessage(message.toRequestBody("application/json".toMediaType()))
+        val response = apiService.sendMessage(
+            message.toRequestBody("application/json".toMediaType()),
+            timetableDao.getTimeTable()?.days.toString().toRequestBody("application/json".toMediaType())
+        )
         if (response.isSuccessful) {
             val responseData = response.body()
             if (responseData != null) {
@@ -33,6 +37,8 @@ class ChatRepository @Inject constructor(private val apiService: ApiService, pri
     suspend fun saveChat(chat: Chat) = chatDao.insertChat(chat)
 
     suspend fun getChat(): Chat? = chatDao.getChat()
+
+    suspend fun clearChat() = chatDao.clearChat()
 
 }
 

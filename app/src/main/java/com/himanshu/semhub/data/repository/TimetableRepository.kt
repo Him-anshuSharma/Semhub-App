@@ -42,6 +42,7 @@ class TimetableRepository @Inject constructor(private val apiService: ApiService
 
     suspend fun saveTimeTable(timetable: Timetable) = timetableDao.insertTimetable(timetable)
 
+    suspend fun getTimeTable(): Timetable? = timetableDao.getTimeTable()
 
 }
 

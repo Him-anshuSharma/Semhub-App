@@ -26,6 +26,12 @@ class TimeTableViewModel @Inject constructor(
     private val timetableRepository: TimetableRepository
 ) : ViewModel() {
 
+    init {
+        viewModelScope.launch {
+            Log.d(TAG,timetableRepository.getTimeTable()?.days.toString())
+        }
+    }
+
     private val _selectedDay = MutableStateFlow(getCurrentDay())
     val selectedDay: StateFlow<String> = _selectedDay.asStateFlow()
 
