@@ -41,6 +41,8 @@ fun Timetable(
     val TAG = "TimeTableFragment"
     val context = LocalContext.current
 
+    timeTableViewModel.getIdToken()
+
     val timetableState by timeTableViewModel.timetableState.collectAsState()
 
     val fileUri = remember { mutableStateOf<Uri?>(null) }

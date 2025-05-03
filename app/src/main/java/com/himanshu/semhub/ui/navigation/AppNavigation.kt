@@ -18,7 +18,7 @@ fun AppNavigation(
 
     NavHost(navController = navController, startDestination = startDestination) {
         composable("login") {
-            LoginScreen(navController = navController)
+            LoginSwcreen(navController = navController)
         }
         composable("homescreen") {
             HomeScreen()

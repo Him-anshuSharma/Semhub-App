@@ -22,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 class TimeTableViewModel @Inject constructor(
-    authRepository: AuthRepository,
+    private val authRepository: AuthRepository,
     private val timetableRepository: TimetableRepository
 ) : ViewModel() {
 
@@ -112,7 +112,16 @@ class TimeTableViewModel @Inject constructor(
         _selectedDay.update { day }
     }
 
-
+    fun getIdToken(){
+        authRepository.getCurrentUser()?.getIdToken(true)
+            ?.addOnSuccessListener { result ->
+                val token = result.token
+                Log.d(TAG,token.toString())
+            }
+            ?.addOnFailureListener { error ->
+                Log.e("Auth", "Token fetch failed: ${error.message}")
+            }
+    }
 
     private fun handleError(message: String?) {
         val errorMsg = message ?: "Something went wrong"

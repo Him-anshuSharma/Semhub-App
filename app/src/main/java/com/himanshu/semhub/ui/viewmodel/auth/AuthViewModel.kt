@@ -1,5 +1,6 @@
 package com.himanshu.semhub.ui.viewmodel.auth
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
@@ -16,7 +17,7 @@ class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private var user: FirebaseUser? = authRepository.getCurrentUser()!!
+    private var user: FirebaseUser? = authRepository.getCurrentUser()
 
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
     val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
@@ -35,6 +36,7 @@ class AuthViewModel @Inject constructor(
                     authRepository.signInWithFirebase(authCred)
                         .onSuccess {
                             _loginState.value = LoginState.Success
+                            Log.d("AuthViewModel",user?.getIdToken(true).toString())
                         }
                         .onFailure {
                             _loginState.value =
