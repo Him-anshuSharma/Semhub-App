@@ -5,12 +5,8 @@ import androidx.credentials.CredentialManager
 import androidx.room.Room
 import com.himanshu.semhub.R
 import com.himanshu.semhub.data.local.AppDatabase
-import com.himanshu.semhub.data.local.chat.ChatDao
-import com.himanshu.semhub.data.local.timetable.TimetableDao
 import com.himanshu.semhub.data.remote.ApiService
 import com.himanshu.semhub.data.repository.AuthRepository
-import com.himanshu.semhub.data.repository.ChatRepository
-import com.himanshu.semhub.data.repository.TimetableRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -51,17 +47,6 @@ object AppModule {
     ): AuthRepository = AuthRepository(context, credentialManager, webClientId)
 
 
-    @Provides
-    @Singleton
-    fun provideTimetableRepository(apiService: ApiService,timetableDao: TimetableDao): TimetableRepository {
-        return TimetableRepository(apiService,timetableDao)
-    }
-
-    @Provides
-    @Singleton
-    fun provideChatRepository(apiService: ApiService,chatDao: ChatDao): ChatRepository {
-        return ChatRepository(apiService,chatDao)
-    }
 
     @Provides
     @Singleton
@@ -78,13 +63,6 @@ object AppModule {
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
         Room.databaseBuilder(context, AppDatabase::class.java, "app_db").fallbackToDestructiveMigration().build()
 
-    @Provides
-    @Singleton
-    fun provideTimetableDao(db: AppDatabase): TimetableDao = db.timetableDao()
-
-    @Provides
-    @Singleton
-    fun provideChatDao(db: AppDatabase): ChatDao = db.chatDao()
 
     @Provides
     @Singleton

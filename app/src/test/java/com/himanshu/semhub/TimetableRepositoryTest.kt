@@ -2,7 +2,6 @@ package com.himanshu.semhub
 
 import com.himanshu.semhub.data.local.timetable.TimetableDao
 import com.himanshu.semhub.data.remote.ApiService
-import com.himanshu.semhub.data.repository.TimetableRepository
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import kotlinx.coroutines.runBlocking

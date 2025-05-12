@@ -5,7 +5,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.himanshu.semhub.ui.screens.homescreen.HomeScreen
 import com.himanshu.semhub.ui.screens.login.LoginScreen
 import com.himanshu.semhub.ui.viewmodel.auth.AuthViewModel
 
@@ -19,9 +18,6 @@ fun AppNavigation(
     NavHost(navController = navController, startDestination = startDestination) {
         composable("login") {
             LoginScreen(navController = navController)
-        }
-        composable("homescreen") {
-            HomeScreen()
         }
     }
 }
