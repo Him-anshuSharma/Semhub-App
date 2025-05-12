@@ -7,6 +7,7 @@ import com.himanshu.semhub.R
 import com.himanshu.semhub.data.local.AppDatabase
 import com.himanshu.semhub.data.remote.ApiService
 import com.himanshu.semhub.data.repository.AuthRepository
+import com.himanshu.semhub.data.repository.OnboardingRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -69,6 +70,13 @@ object AppModule {
     fun provideApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }
-
-
+    // Add this provider method
+    @Provides
+    @Singleton
+    fun provideOnboardingRepository(
+        apiService: ApiService,
+        @ApplicationContext context: Context
+    ): OnboardingRepository {
+        return OnboardingRepository(apiService, context)
+    }
 }
