@@ -1,8 +1,8 @@
 package com.himanshu.semhub.data.repository
 import android.content.Context
 import android.net.Uri
+import com.himanshu.semhub.data.model.Onboarding
 import com.himanshu.semhub.data.remote.ApiService
-import com.himanshu.semhub.data.remote.OnBoardingResponse
 import com.himanshu.semhub.utils.uriToFile // Import your helper function
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -21,13 +21,13 @@ class OnboardingRepository(
      * @param token Authentication token
      * @param imageUris List of image URIs to upload
      * @param audioUris Optional list of audio URIs to upload
-     * @return OnBoardingResponse containing tasks and goals for the user
+     * @return Onboarding containing tasks and goals for the user
      */
     suspend fun onboardUser(
         token: String,
         imageUris: List<Uri>,
         audioUris: List<Uri>? = null
-    ): Result<OnBoardingResponse> = withContext(Dispatchers.IO) {
+    ): Result<Onboarding> = withContext(Dispatchers.IO) {
         try {
             // Convert image URIs to MultipartBody.Parts
             val imageParts = imageUris.mapNotNull { uri ->

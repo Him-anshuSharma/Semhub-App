@@ -1,4 +1,4 @@
-package com.himanshu.semhub.data.model.auth
+package com.himanshu.semhub.data.model
 
 data class User(
     val uid: String = "",
