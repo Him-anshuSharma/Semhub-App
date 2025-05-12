@@ -34,47 +34,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.himanshu.semhub.R
 import com.himanshu.semhub.ui.screens.login.components.GoogleSignInButton
-import com.himanshu.semhub.ui.viewmodel.auth.AuthViewModel
-import com.himanshu.semhub.ui.viewmodel.auth.LoginState
+import com.himanshu.semhub.ui.viewmodel.AuthViewModel
+import com.himanshu.semhub.ui.viewmodel.LoginState
 
-//
-//@Composable
-//fun LoginScreen(
-//    navController: NavController = rememberNavController(),
-//    viewModel: AuthViewModel = hiltViewModel(),
-//) {
-//    val loginState by viewModel.loginState.collectAsState()
-//
-//    LaunchedEffect(loginState) {
-//        when (loginState) {
-//            is LoginState.Success -> {
-//                navController.navigate("profile") {
-//                    popUpTo("login") { inclusive = true }
-//                }
-//            }
-//            is LoginState.Error -> {
-//                Log.e("LoginError", (loginState as LoginState.Error).message)
-//            }
-//            else -> {}
-//        }
-//    }
-//
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .padding(16.dp),
-//        contentAlignment = Alignment.Center
-//    ) {
-//        Button(
-//            onClick = { viewModel.login() },
-//            enabled = loginState != LoginState.Loading
-//        ) {
-//            Text(
-//                text = if (loginState == LoginState.Loading) "Signing In..." else "Sign in with Google"
-//            )
-//        }
-//    }
-//}
 @Composable
 fun LoginScreen(
     navController: NavController = rememberNavController(),
@@ -87,7 +49,7 @@ fun LoginScreen(
     LaunchedEffect(loginState) {
         when (loginState) {
             is LoginState.Success -> {
-                navController.navigate("homescreen") {
+                navController.navigate("onboarding") {
                     popUpTo("login") { inclusive = true }
                 }
             }

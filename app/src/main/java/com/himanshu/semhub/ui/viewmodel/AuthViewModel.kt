@@ -1,4 +1,4 @@
-package com.himanshu.semhub.ui.viewmodel.auth
+package com.himanshu.semhub.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

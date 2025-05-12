@@ -8,11 +8,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.TextField
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,6 +33,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -97,6 +93,33 @@ fun OnboardingScreen(
             fontWeight = FontWeight.Bold
         )
 
+        // User Information Card
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "Your Information",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+
+                OutlinedTextField(
+                    value = userSubject,
+                    onValueChange = { viewModel.updateUserSubject(it) },
+                    label = { Text("Whatever you can think of") },
+                    placeholder = { Text("e.g., Calculus, Computer Science") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
+                )
+            }
+        }
+
         // Images Section
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -117,7 +140,6 @@ fun OnboardingScreen(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
-
                     IconButton(
                         onClick = { imagePickerLauncher.launch("image/*") },
                         modifier = Modifier
@@ -316,43 +338,18 @@ fun OnboardingScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        // Add this after your introduction text and before the Images Card
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Text(
-                    text = "Your Information",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-
-                var subject by remember { mutableStateOf("") }
-                OutlinedTextField(
-                    value = subject,
-                    onValueChange = { subject = it },
-                    label = { Text("Whatever you can think of") },
-                    placeholder = { Text("e.g., Calculus, Computer Science") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = { viewModel.submitOnboarding("your-temp-token") },
+            onClick = {
+                // Pass the subject along with the token when submitting
+                viewModel.submitOnboarding()
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
             shape = RoundedCornerShape(12.dp),
-            enabled = selectedImages.isNotEmpty() && onboardingState !is OnboardingViewModel.OnboardingState.Loading
+            enabled = selectedImages.isNotEmpty() &&
+                    userSubject.isNotBlank() &&
+                    onboardingState !is OnboardingViewModel.OnboardingState.Loading
         ) {
             if (onboardingState is OnboardingViewModel.OnboardingState.Loading) {
                 CircularProgressIndicator(
@@ -376,7 +373,6 @@ fun OnboardingScreen(
                     navigateToHome()
                 }
             }
-
             is OnboardingViewModel.OnboardingState.Error -> {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
@@ -385,29 +381,28 @@ fun OnboardingScreen(
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-
-            else -> { /* Initial or Loading state handled above */
-            }
+            else -> { /* Initial or Loading state handled above */ }
         }
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun OnboardingScreenPreview() {
-    // Create a simple ViewModel for preview purposes
 
-    val previewViewModel = OnboardingViewModel(
-        // Pass mock dependencies or use FakeOnboardingRepository
-        OnboardingRepository(FakeApiService(), LocalContext.current)
-    )
-
-
-    OnboardingScreen(
-        viewModel = previewViewModel,
-        navigateToHome = {}
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun OnboardingScreenPreview() {
+//    // Create a simple ViewModel for preview purposes
+//
+//    val previewViewModel = OnboardingViewModel(
+//        // Pass mock dependencies or use FakeOnboardingRepository
+//        OnboardingRepository(FakeApiService(), LocalContext.current)
+//    )
+//
+//
+//    OnboardingScreen(
+//        viewModel = previewViewModel,
+//        navigateToHome = {}
+//    )
+//}
 
 
 // You'll need to create this fake class for preview

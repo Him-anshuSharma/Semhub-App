@@ -3,6 +3,7 @@ package com.himanshu.semhub.di
 import android.content.Context
 import androidx.credentials.CredentialManager
 import androidx.room.Room
+import com.google.firebase.auth.FirebaseAuth
 import com.himanshu.semhub.R
 import com.himanshu.semhub.data.local.AppDatabase
 import com.himanshu.semhub.data.remote.ApiService
@@ -26,6 +27,15 @@ object AppModule {
     private val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY // Logs request and response body
     }
+
+    @Module
+    @InstallIn(SingletonComponent::class)
+    object FirebaseModule {
+
+        @Provides
+        fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+    }
+
 
     @Provides
     @Singleton
