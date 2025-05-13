@@ -40,7 +40,6 @@ class OnboardingViewModel @Inject constructor(
     val userSubject: StateFlow<String> = _userSubject
 
     private val _token = MutableStateFlow<String?>(null)
-q
     init {
         fetchToken()
     }
