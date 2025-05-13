@@ -18,6 +18,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 @Module
@@ -62,12 +63,20 @@ object AppModule {
     @Provides
     @Singleton
     fun provideRetrofit(): Retrofit {
+        val okHttpClient = OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(120, TimeUnit.SECONDS)  // Increased for file uploads
+            .readTimeout(60, TimeUnit.SECONDS)
+            .addInterceptor(logging)
+            .build()
+
         return Retrofit.Builder()
             .baseUrl("http://10.0.2.2:8000/") // Change to your FastAPI backend
             .addConverterFactory(GsonConverterFactory.create())
-            .client(OkHttpClient.Builder().addInterceptor(interceptor = logging).build())
+            .client(okHttpClient)
             .build()
     }
+
 
     @Provides
     @Singleton
