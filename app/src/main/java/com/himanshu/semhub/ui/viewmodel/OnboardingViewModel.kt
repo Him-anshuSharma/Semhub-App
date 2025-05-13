@@ -1,6 +1,7 @@
 package com.himanshu.semhub.ui.viewmodel
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -21,6 +22,8 @@ class OnboardingViewModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ) : ViewModel() {
 
+    private val TAG = "ONBOARDING VIEW MODEL"
+
     private val _onboardingState = MutableStateFlow<OnboardingState>(OnboardingState.Initial)
     val onboardingState: StateFlow<OnboardingState> = _onboardingState
 
@@ -37,29 +40,30 @@ class OnboardingViewModel @Inject constructor(
     val userSubject: StateFlow<String> = _userSubject
 
     private val _token = MutableStateFlow<String?>(null)
-    val token: StateFlow<String?> = _token
-
+q
     init {
         fetchToken()
     }
 
-    private fun fetchToken() {
+    private fun fetchToken(forceRefresh: Boolean = false) {
         viewModelScope.launch {
             try {
                 val user = firebaseAuth.currentUser
                 if (user != null) {
-                    // Get token with force refresh = false to use cached token when available
-                    user.getIdToken(false).await()?.let { tokenResult ->
+                    user.getIdToken(forceRefresh).await()?.let { tokenResult ->
                         _token.value = tokenResult.token
+                        Log.d(TAG, "Token fetched successfully: ${tokenResult.token?.take(10)}...")
                     }
                 } else {
                     _onboardingState.value = OnboardingState.Error("User not authenticated")
                 }
             } catch (e: Exception) {
+                Log.e(TAG, "Token fetch failed", e)
                 _onboardingState.value = OnboardingState.Error("Failed to get authentication token: ${e.message}")
             }
         }
     }
+
 
     fun updateUserName(name: String) {
         _userName.value = name
@@ -117,9 +121,11 @@ class OnboardingViewModel @Inject constructor(
         _onboardingState.value = OnboardingState.Loading
 
         viewModelScope.launch {
+            Log.d(TAG,currentToken)
             val audios = _selectedAudios.value.takeIf { it.isNotEmpty() }
             onboardingRepository.onboardUser(currentToken, images, audios)
                 .onSuccess { response ->
+                    Log.d(TAG,response.tasks.toString())
                     _onboardingState.value = OnboardingState.Success(response)
                 }
                 .onFailure { error ->
@@ -158,7 +164,7 @@ class OnboardingViewModel @Inject constructor(
         return suspendCancellableCoroutine { continuation ->
             addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    continuation.resume(task.result) { }
+                    continuation.resume(task.result) { cause, _, _ -> }
                 } else {
                     continuation.resumeWithException(task.exception ?: Exception("Unknown error"))
                 }

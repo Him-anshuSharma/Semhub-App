@@ -2,18 +2,21 @@ package com.himanshu.semhub.data.remote
 
 import com.himanshu.semhub.data.model.Onboarding
 import okhttp3.MultipartBody
+import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Query
 
 interface ApiService {
+    // In your API service
     @Multipart
-    @POST("/v2/onboarding/onboard")
+    @POST("v2/onboarding/onboard")
     suspend fun onboard(
-        @Query("token") token: String,
+        @Header("Authorization") authHeader: String,
         @Part images: List<MultipartBody.Part>,
-        @Part audios: List<MultipartBody.Part>? = null
+        @Part audios: List<MultipartBody.Part>?
     ): Onboarding
+
 }
 

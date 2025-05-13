@@ -27,8 +27,9 @@ class OnboardingRepository(
         token: String,
         imageUris: List<Uri>,
         audioUris: List<Uri>? = null
-    ): Result<Onboarding> = withContext(Dispatchers.IO) {
-        try {
+    ): Result<Onboarding> {
+        return try {
+            val authHeader = "Bearer $token"
             // Convert image URIs to MultipartBody.Parts
             val imageParts = imageUris.mapNotNull { uri ->
                 createMultipartBodyPart(uri, "images")
@@ -40,7 +41,7 @@ class OnboardingRepository(
             }
 
             // Make API call
-            val response = apiService.onboard(token, imageParts, audioParts)
+            val response = apiService.onboard(authHeader, imageParts, audioParts)
             Result.success(response)
         } catch (e: Exception) {
             Result.failure(e)
