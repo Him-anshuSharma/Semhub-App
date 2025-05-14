@@ -1,22 +1,35 @@
 package com.himanshu.semhub.data.repository
 import android.content.Context
 import android.net.Uri
+import android.util.Log
+import com.google.inject.Inject
+import com.himanshu.semhub.data.local.AppDatabase
+import com.himanshu.semhub.data.local.relations.GoalTaskCrossRef
 import com.himanshu.semhub.data.model.Onboarding
 import com.himanshu.semhub.data.remote.ApiService
-import com.himanshu.semhub.utils.uriToFile // Import your helper function
+import com.himanshu.semhub.utils.uriToFile
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
 
-class OnboardingRepository(
+
+class OnboardingRepository @Inject constructor(
     private val apiService: ApiService,
-    private val context: Context
+    private val appDatabase: AppDatabase,
+    @ApplicationContext private val context: Context
 ) {
+
+    val TAG = "OnboardingRepository"
+    private val taskDao = appDatabase.taskDao()
+    private val subtaskDao = appDatabase.subtaskDao()
+    private val goalDao = appDatabase.goalDao()
+
     /**
      * Uploads images and optional audio files for user onboarding
+     * and saves the received data to the local database
      *
      * @param token Authentication token
      * @param imageUris List of image URIs to upload
@@ -42,9 +55,48 @@ class OnboardingRepository(
 
             // Make API call
             val response = apiService.onboard(authHeader, imageParts, audioParts)
+
+            // Save the received data to the local database
+            saveOnboardingDataToDb(response)
+
             Result.success(response)
         } catch (e: Exception) {
+            Log.d(TAG, "Error during onboarding: ${e.message}")
             Result.failure(e)
+        }
+
+    }
+
+    /**
+     * Saves onboarding data (tasks, subtasks, goals) to the local database
+     */
+    private suspend fun saveOnboardingDataToDb(onboarding: Onboarding) = withContext(Dispatchers.IO) {
+        // Save tasks and their subtasks
+        onboarding.tasks.forEach { task ->
+            // Insert the task and get its generated ID
+            val taskId = taskDao.insert(task)
+
+            // Insert subtasks with the parent task ID
+            task.subtasks?.forEach { subtask ->
+                val subtaskWithTaskId = subtask.copy(taskId = taskId)
+                subtaskDao.insert(subtaskWithTaskId)
+            }
+            Log.d(TAG,"Saved in DB")
+        }
+
+        // Save goals and their relationships with tasks
+        onboarding.goals?.forEach { goal ->
+            // Insert the goal and get its generated ID
+            val goalId = goalDao.insert(goal)
+
+            // Create cross-references between goals and tasks
+            goal.targetTasks?.forEach { task ->
+                // First insert the task if it doesn't exist
+                val taskId = taskDao.insert(task)
+
+                // Create the cross-reference
+                goalDao.insertGoalTaskCrossRef(GoalTaskCrossRef(goalId, taskId))
+            }
         }
     }
 
@@ -66,7 +118,4 @@ class OnboardingRepository(
             requestBody
         )
     }
-
-    // Assuming your helper function is in a utils package, if not, you can include it here
-    // fun uriToFile(context: Context, uri: Uri): File? { ... }
 }
