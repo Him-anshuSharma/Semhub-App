@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.himanshu.semhub.data.model.DashboardSummary
 import com.himanshu.semhub.data.model.Goal
 import com.himanshu.semhub.data.model.Task
@@ -14,6 +15,7 @@ import com.himanshu.semhub.ui.viewmodel.DashboardViewModel
 
 @Composable
 fun DashboardScreen(
+    navController: NavController,
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val dashboardSummary by viewModel.dashboardSummary.collectAsState()

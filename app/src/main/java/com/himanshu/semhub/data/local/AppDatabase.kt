@@ -26,7 +26,7 @@ data class SampleEntity(
         Goal::class,
         GoalTaskCrossRef::class
     ],
-    version = 4
+    version = 5
 )
 abstract class AppDatabase: RoomDatabase(){
     abstract fun taskDao(): TaskDao

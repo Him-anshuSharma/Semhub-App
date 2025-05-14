@@ -5,6 +5,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.himanshu.semhub.ui.screens.dashboard.DashboardScreen
 import com.himanshu.semhub.ui.screens.login.LoginScreen
 import com.himanshu.semhub.ui.screens.onboarding.OnboardingScreen
 import com.himanshu.semhub.ui.viewmodel.AuthViewModel
@@ -22,12 +23,19 @@ fun AppNavigation(
         }
         composable("onboarding") {
             OnboardingScreen(
-                navigateToHome = {
-                    navController.navigate("login") {
-                        popUpTo("onboarding") { inclusive = true }
-                    }
-                }
+                navController
+            )
+        }
+        composable("dashboard"){
+            DashboardScreen(
+                navController
             )
         }
     }
+}
+
+object Routes{
+    val Login = "login"
+    val Onboarding = "onboarding"
+    val Dashboard = "dashboard"
 }

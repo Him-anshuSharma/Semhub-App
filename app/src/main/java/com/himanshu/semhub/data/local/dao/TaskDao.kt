@@ -22,6 +22,9 @@ interface TaskDao {
     @Query("SELECT * FROM tasks")
     fun getTasksWithSubtasks(): List<TaskWithSubtasks>
 
+    @Query("SELECT * FROM tasks WHERE title = :title LIMIT 1")
+    suspend fun findTaskByTitle(title: String): Task?
+
     @Transaction
     @Query("SELECT * FROM tasks WHERE id = :taskId")
     fun getTaskWithSubtasks(taskId: Long): TaskWithSubtasks?

@@ -15,5 +15,5 @@ data class Goal(
     @ColumnInfo(name = "target_date") val targetDate: String? = null,
 ){
     @Ignore
-    @SerializedName("target_tasks") val targetTasks: List<Task>? = null
+    @SerializedName("target_tasks") val targetTasksTitles: List<String>? = null
 }

@@ -50,18 +50,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.himanshu.semhub.R
 import com.himanshu.semhub.data.model.Onboarding
 import com.himanshu.semhub.data.remote.ApiService
 import com.himanshu.semhub.data.repository.OnboardingRepository
+import com.himanshu.semhub.ui.navigation.AppNavigation
+import com.himanshu.semhub.ui.navigation.Routes
 import com.himanshu.semhub.ui.viewmodel.OnboardingViewModel
 import okhttp3.MultipartBody
 
 @Composable
 fun OnboardingScreen(
-    viewModel: OnboardingViewModel = hiltViewModel(),
-    navigateToHome: () -> Unit
+    navController: NavController,
+    viewModel: OnboardingViewModel = hiltViewModel()
 ) {
     val userSubject by viewModel.userSubject.collectAsState()
     val onboardingState by viewModel.onboardingState.collectAsState()
@@ -369,8 +372,7 @@ fun OnboardingScreen(
         when (val state = onboardingState) {
             is OnboardingViewModel.OnboardingState.Success -> {
                 LaunchedEffect(state) {
-                    // Navigate to home screen after successful onboarding
-                    navigateToHome()
+                    navController.navigate(Routes.Dashboard)
                 }
             }
             is OnboardingViewModel.OnboardingState.Error -> {

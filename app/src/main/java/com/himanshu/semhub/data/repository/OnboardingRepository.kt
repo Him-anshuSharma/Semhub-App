@@ -27,6 +27,29 @@ class OnboardingRepository @Inject constructor(
     private val subtaskDao = appDatabase.subtaskDao()
     private val goalDao = appDatabase.goalDao()
 
+
+    /**
+     * Checks if there are existing tasks in the database
+     * @return Result with Onboarding containing existing data if available, or null if no data exists
+     */
+    suspend fun checkExistingData(): Result<Onboarding?> = withContext(Dispatchers.IO) {
+        try {
+            val tasks = taskDao.getAllTasks()
+            val goals = goalDao.getAllGoals()
+
+            return@withContext if (tasks.isNotEmpty()) {
+                // If tasks exist, create an Onboarding object with the existing data
+                Result.success(Onboarding(tasks = tasks, goals = goals))
+            } else {
+                // No existing data
+                Result.success(null)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error checking existing data: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
     /**
      * Uploads images and optional audio files for user onboarding
      * and saves the received data to the local database
@@ -73,15 +96,22 @@ class OnboardingRepository @Inject constructor(
     private suspend fun saveOnboardingDataToDb(onboarding: Onboarding) = withContext(Dispatchers.IO) {
         // Save tasks and their subtasks
         onboarding.tasks.forEach { task ->
+            // Ensure task has a priority to avoid NULL constraint error
+            val taskWithPriority = if (task.priority.isNullOrEmpty()) {
+                task.copy(priority = "medium")
+            } else {
+                task
+            }
+
             // Insert the task and get its generated ID
-            val taskId = taskDao.insert(task)
+            val taskId = taskDao.insert(taskWithPriority)
 
             // Insert subtasks with the parent task ID
             task.subtasks?.forEach { subtask ->
                 val subtaskWithTaskId = subtask.copy(taskId = taskId)
                 subtaskDao.insert(subtaskWithTaskId)
             }
-            Log.d(TAG,"Saved in DB")
+            Log.d(TAG, "Saved task in DB: ${task.title}")
         }
 
         // Save goals and their relationships with tasks
@@ -90,12 +120,19 @@ class OnboardingRepository @Inject constructor(
             val goalId = goalDao.insert(goal)
 
             // Create cross-references between goals and tasks
-            goal.targetTasks?.forEach { task ->
-                // First insert the task if it doesn't exist
-                val taskId = taskDao.insert(task)
+            goal.targetTasksTitles?.forEach { taskTitle ->
+                if (taskTitle is String) {
+                    // Find the task by title
+                    val task = taskDao.findTaskByTitle(taskTitle)
 
-                // Create the cross-reference
-                goalDao.insertGoalTaskCrossRef(GoalTaskCrossRef(goalId, taskId))
+                    if (task != null) {
+                        // Create the cross-reference
+                        goalDao.insertGoalTaskCrossRef(GoalTaskCrossRef(goalId, task.id))
+                        Log.d(TAG, "Created goal-task relationship: ${goal.name} -> $taskTitle")
+                    } else {
+                        Log.w(TAG, "Could not find task with title: $taskTitle")
+                    }
+                }
             }
         }
     }

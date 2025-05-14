@@ -13,7 +13,7 @@ data class Task(
     val type: String,
     val subject: String,
     val deadline: String? = null,
-    val priority: String,
+    val priority: String?,
     @SerializedName("estimated_hours")
     @ColumnInfo(name = "estimated_hours") val estimatedHours: Float? = null,
 ) {

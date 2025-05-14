@@ -42,6 +42,28 @@ class OnboardingViewModel @Inject constructor(
     private val _token = MutableStateFlow<String?>(null)
     init {
         fetchToken()
+        checkExistingData()
+    }
+
+    private fun checkExistingData() {
+        viewModelScope.launch {
+            try {
+                // Check if tasks exist in the database
+                onboardingRepository.checkExistingData()
+                    .onSuccess { existingData ->
+                        if (existingData != null) {
+                            // If we have existing data, set state to success
+                            _onboardingState.value = OnboardingState.Success(existingData)
+                            Log.d(TAG, "Found existing tasks in database, skipping onboarding")
+                        }
+                    }
+                    .onFailure { error ->
+                        Log.e(TAG, "Error checking existing data: ${error.message}")
+                    }
+            } catch (e: Exception) {
+                Log.e(TAG, "Exception checking existing data", e)
+            }
+        }
     }
 
     private fun fetchToken(forceRefresh: Boolean = false) {
