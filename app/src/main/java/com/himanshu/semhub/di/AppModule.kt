@@ -6,6 +6,9 @@ import androidx.room.Room
 import com.google.firebase.auth.FirebaseAuth
 import com.himanshu.semhub.R
 import com.himanshu.semhub.data.local.AppDatabase
+import com.himanshu.semhub.data.local.dao.GoalDao
+import com.himanshu.semhub.data.local.dao.SubtaskDao
+import com.himanshu.semhub.data.local.dao.TaskDao
 import com.himanshu.semhub.data.remote.ApiService
 import com.himanshu.semhub.data.repository.AuthRepository
 import com.himanshu.semhub.data.repository.OnboardingRepository
@@ -59,7 +62,6 @@ object AppModule {
     ): AuthRepository = AuthRepository(context, credentialManager, webClientId)
 
 
-
     @Provides
     @Singleton
     fun provideRetrofit(): Retrofit {
@@ -81,7 +83,8 @@ object AppModule {
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
-        Room.databaseBuilder(context, AppDatabase::class.java, "app_db").fallbackToDestructiveMigration().build()
+        Room.databaseBuilder(context, AppDatabase::class.java, "app_db")
+            .fallbackToDestructiveMigration().build()
 
 
     @Provides
@@ -89,13 +92,30 @@ object AppModule {
     fun provideApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }
-    // Add this provider method
+
+    @Provides
+    fun provideTaskDao(appDatabase: AppDatabase): TaskDao {
+        return appDatabase.taskDao()
+    }
+
+    @Provides
+    fun provideSubtaskDao(appDatabase: AppDatabase): SubtaskDao {
+        return appDatabase.subtaskDao()
+    }
+
+    @Provides
+    fun provideGoalDao(appDatabase: AppDatabase): GoalDao {
+        return appDatabase.goalDao()
+    }
+
     @Provides
     @Singleton
     fun provideOnboardingRepository(
         apiService: ApiService,
+        appDatabase: AppDatabase,
         @ApplicationContext context: Context
     ): OnboardingRepository {
-        return OnboardingRepository(apiService, context)
+        return OnboardingRepository(apiService, appDatabase, context)
     }
 }
+
