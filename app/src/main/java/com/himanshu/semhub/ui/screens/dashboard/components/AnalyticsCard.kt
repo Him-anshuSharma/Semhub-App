@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AnalyticsCard(
     title: String,
-    description: String,
     iconResId: Int,
     backgroundColor: Color,
     contentColor: Color,
@@ -43,42 +42,31 @@ fun AnalyticsCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 painter = painterResource(id = iconResId),
                 contentDescription = null,
                 tint = contentColor,
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(24.dp)
             )
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(12.dp))
 
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = contentColor,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = contentColor
-                )
-            }
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = contentColor,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
+            )
 
-            IconButton(
-                onClick = { /* Navigate to analytics screen */ }
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = "View $title",
-                    tint = contentColor
-                )
-            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = "View $title",
+                tint = contentColor
+            )
         }
     }
 }

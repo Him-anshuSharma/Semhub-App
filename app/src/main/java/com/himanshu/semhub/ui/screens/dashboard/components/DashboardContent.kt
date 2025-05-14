@@ -1,13 +1,17 @@
 package com.himanshu.semhub.ui.screens.dashboard.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -34,7 +38,6 @@ import com.himanshu.semhub.R
 import com.himanshu.semhub.data.model.DashboardSummary
 import com.himanshu.semhub.data.model.Goal
 import com.himanshu.semhub.data.model.Task
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,112 +92,120 @@ fun DashboardContent(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 } else {
-                    LazyColumn(
+                    Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         // Summary cards
-                        item {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(16.dp)
-                            ) {
-                                // Tasks summary card
-                                SummaryCard(
-                                    title = "Tasks",
-                                    count = dashboardSummary.taskCount,
-                                    iconResId = R.drawable.flag,
-                                    modifier = Modifier.weight(1f)
-                                )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            // Tasks summary card
+                            SummaryCard(
+                                title = "Tasks",
+                                count = dashboardSummary.taskCount,
+                                iconResId = R.drawable.flag,
+                                modifier = Modifier.weight(1f)
+                            )
 
-                                // Goals summary card
-                                SummaryCard(
-                                    title = "Goals",
-                                    count = dashboardSummary.goalCount,
-                                    iconResId = R.drawable.flag,
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
-                        }
-
-                        // Recent tasks section
-                        item {
-                            Text(
-                                text = "Recent Tasks",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(top = 8.dp)
+                            // Goals summary card
+                            SummaryCard(
+                                title = "Goals",
+                                count = dashboardSummary.goalCount,
+                                iconResId = R.drawable.flag,
+                                modifier = Modifier.weight(1f)
                             )
                         }
 
-                        // Task items
-                        if (tasks.isEmpty()) {
-                            item {
-                                EmptyStateCard(message = "No tasks available")
-                            }
-                        } else {
-                            items(tasks.take(3)) { task ->
-                                TaskCard(task = task)
-                            }
+                        // Recent tasks section with compact header
+                        CompactSectionHeader(title = "Recent Tasks")
 
-                            // View all tasks button
-                            if (tasks.size > 3) {
-                                item {
-                                    TextButton(
-                                        onClick = { /* Navigate to tasks screen */ },
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        Text("View All Tasks")
-                                    }
-                                }
+                        // Single task preview (most recent)
+                        if (tasks.isEmpty()) {
+                            EmptyStateCard(
+                                message = "No tasks available",
+                                compact = true
+                            )
+                        } else {
+                            TaskCard(
+                                task = tasks.first(),
+                                compact = false
+                            )
+                            if (tasks.size > 1) {
+                                Text(
+                                    text = "View all ${tasks.size} tasks",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier
+                                        .align(Alignment.End)
+                                        .clickable { /* Navigate to tasks */ }
+                                )
+                            }
+                        }
+
+                        // Recent goals section
+                        CompactSectionHeader(title = "Recent Goals")
+
+                        // Single goal preview (most recent)
+                        if (goals.isEmpty()) {
+                            EmptyStateCard(
+                                message = "No goals available",
+                                compact = true
+                            )
+                        } else {
+                            GoalCard(
+                                goal = goals.first(),
+                                compact = false
+                            )
+                            if (goals.size > 1) {
+                                Text(
+                                    text = "View all ${goals.size} goals",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier
+                                        .align(Alignment.End)
+                                        .clickable { /* Navigate to goals */ }
+                                )
                             }
                         }
 
                         // Analytics section
-                        item {
-                            Text(
-                                text = "Analytics",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(top = 8.dp)
-                            )
-                        }
+                        CompactSectionHeader(title = "Analytics")
 
-                        // Screen Time card
-                        item {
-                            AnalyticsCard(
-                                title = "Screen Time",
-                                description = "Track your device usage and set healthy limits",
-                                iconResId = R.drawable.clock,
-                                backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                            )
-                        }
+                        // Analytics cards
+                        AnalyticsCard(
+                            title = "Screen Time",
+                            iconResId = R.drawable.clock,
+                            backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
 
-                        // Insights card
-                        item {
-                            AnalyticsCard(
-                                title = "Insights",
-                                description = "Get personalized productivity recommendations",
-                                iconResId = R.drawable.insights,
-                                backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onTertiaryContainer
-                            )
-                        }
+                        AnalyticsCard(
+                            title = "Insights",
+                            iconResId = R.drawable.insights,
+                            backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                        )
+
+                        // Spacer to push refresh button to bottom if needed
+                        Spacer(modifier = Modifier.weight(1f, fill = false))
 
                         // Refresh button
-                        item {
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Button(
-                                onClick = onRefresh,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Icon(Icons.Filled.Refresh, contentDescription = null)
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text("Refresh Dashboard")
-                            }
+                        Button(
+                            onClick = onRefresh,
+                            modifier = Modifier.fillMaxWidth(),
+                            contentPadding = PaddingValues(vertical = 8.dp)
+                        ) {
+                            Icon(
+                                Icons.Filled.Refresh,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Refresh")
                         }
                     }
                 }
@@ -202,4 +213,3 @@ fun DashboardContent(
         }
     }
 }
-
