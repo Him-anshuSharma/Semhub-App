@@ -1,40 +1,25 @@
 package com.himanshu.semhub.data.local.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import androidx.room.Update
-import com.himanshu.semhub.data.local.relations.TaskWithSubtasks
-import com.himanshu.semhub.data.model.Task
+import com.himanshu.semhub.data.local.entities.SubtaskEntity
+import com.himanshu.semhub.data.local.entities.TaskEntity
 
 @Dao
 interface TaskDao {
-    @Query("SELECT * FROM tasks")
-    fun getAllTasks(): List<Task>
-
-    @Query("SELECT * FROM tasks WHERE id = :taskId")
-    fun getTaskById(taskId: Long): Task?
-
-    @Transaction
-    @Query("SELECT * FROM tasks")
-    fun getTasksWithSubtasks(): List<TaskWithSubtasks>
-
-    @Query("SELECT * FROM tasks WHERE title = :title LIMIT 1")
-    suspend fun findTaskByTitle(title: String): Task?
-
-    @Transaction
-    @Query("SELECT * FROM tasks WHERE id = :taskId")
-    fun getTaskWithSubtasks(taskId: Long): TaskWithSubtasks?
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTasks(tasks: List<TaskEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(task: Task): Long
+    suspend fun insertSubtasks(subtasks: List<SubtaskEntity>)
 
-    @Update
-    fun update(task: Task)
+    @Transaction
+    @Query("SELECT * FROM tasks")
+    suspend fun getTasksWithSubtasks(): List<TaskWithSubtasks>
 
-    @Delete
-    fun delete(task: Task)
+    @Query("DELETE FROM tasks")
+    suspend fun clearAllTasks()
 }

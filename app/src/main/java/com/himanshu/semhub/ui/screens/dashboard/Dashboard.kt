@@ -8,8 +8,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.himanshu.semhub.data.model.DashboardSummary
-import com.himanshu.semhub.data.model.Goal
-import com.himanshu.semhub.data.model.Task
 import com.himanshu.semhub.ui.screens.dashboard.components.DashboardContent
 import com.himanshu.semhub.ui.viewmodel.DashboardViewModel
 

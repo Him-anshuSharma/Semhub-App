@@ -5,7 +5,6 @@ import android.util.Log
 import com.google.inject.Inject
 import com.himanshu.semhub.data.local.AppDatabase
 import com.himanshu.semhub.data.local.relations.GoalTaskCrossRef
-import com.himanshu.semhub.data.model.Onboarding
 import com.himanshu.semhub.data.remote.ApiService
 import com.himanshu.semhub.utils.uriToFile
 import dagger.hilt.android.qualifiers.ApplicationContext

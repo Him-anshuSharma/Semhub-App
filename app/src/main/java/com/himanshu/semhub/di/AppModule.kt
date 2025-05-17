@@ -6,9 +6,6 @@ import androidx.room.Room
 import com.google.firebase.auth.FirebaseAuth
 import com.himanshu.semhub.R
 import com.himanshu.semhub.data.local.AppDatabase
-import com.himanshu.semhub.data.local.dao.GoalDao
-import com.himanshu.semhub.data.local.dao.SubtaskDao
-import com.himanshu.semhub.data.local.dao.TaskDao
 import com.himanshu.semhub.data.remote.ApiService
 import com.himanshu.semhub.data.repository.AuthRepository
 import com.himanshu.semhub.data.repository.OnboardingRepository

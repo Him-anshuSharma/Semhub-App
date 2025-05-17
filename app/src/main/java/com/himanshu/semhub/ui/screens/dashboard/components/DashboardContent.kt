@@ -36,8 +36,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.himanshu.semhub.R
 import com.himanshu.semhub.data.model.DashboardSummary
-import com.himanshu.semhub.data.model.Goal
-import com.himanshu.semhub.data.model.Task
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

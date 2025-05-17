@@ -1,8 +1,5 @@
 package com.himanshu.semhub.data.repository
 
-import com.himanshu.semhub.data.local.dao.GoalDao
-import com.himanshu.semhub.data.local.dao.SubtaskDao
-import com.himanshu.semhub.data.local.dao.TaskDao
 import com.himanshu.semhub.data.model.DashboardSummary
 import com.himanshu.semhub.data.model.GoalStats
 import com.himanshu.semhub.data.model.TaskStats

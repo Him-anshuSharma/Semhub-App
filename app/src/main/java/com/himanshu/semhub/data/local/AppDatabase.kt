@@ -5,13 +5,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.RoomDatabase
 import com.himanshu.semhub.data.local.dao.GoalDao
-import com.himanshu.semhub.data.local.dao.SubtaskDao
 import com.himanshu.semhub.data.local.dao.TaskDao
-import com.himanshu.semhub.data.local.relations.GoalTaskCrossRef
-import com.himanshu.semhub.data.model.Goal
-import com.himanshu.semhub.data.model.Subtask
-import com.himanshu.semhub.data.model.Task
-import com.himanshu.semhub.data.model.User
+import com.himanshu.semhub.data.local.entities.GoalEntity
+import com.himanshu.semhub.data.local.entities.GoalTaskCrossRef
+import com.himanshu.semhub.data.local.entities.SubtaskEntity
+import com.himanshu.semhub.data.local.entities.TaskEntity
 
 @Entity
 data class SampleEntity(
@@ -21,15 +19,14 @@ data class SampleEntity(
 
 @Database(
     entities = [
-        Task::class,
-        Subtask::class,
-        Goal::class,
+        TaskEntity::class,
+        SubtaskEntity::class,
+        GoalEntity::class,
         GoalTaskCrossRef::class
     ],
-    version = 5
+    version = 6
 )
 abstract class AppDatabase: RoomDatabase(){
     abstract fun taskDao(): TaskDao
-    abstract fun subtaskDao(): SubtaskDao
     abstract fun goalDao(): GoalDao
 }

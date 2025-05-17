@@ -4,8 +4,6 @@ package com.himanshu.semhub.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.himanshu.semhub.data.model.DashboardSummary
-import com.himanshu.semhub.data.model.Goal
-import com.himanshu.semhub.data.model.Task
 import com.himanshu.semhub.data.repository.DashboardRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
