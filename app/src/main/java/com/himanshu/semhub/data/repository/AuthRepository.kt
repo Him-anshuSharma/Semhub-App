@@ -18,6 +18,8 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.tasks.await
+import java.util.Date
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -31,12 +33,22 @@ class AuthRepository @Inject constructor(
 ) {
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
+    // Token expiration buffer (5 minutes in milliseconds)
+    private val tokenExpirationBuffer = 5 * 60 * 1000
+
+    // Cache for the last token and its expiration time
+    private var cachedIdToken: String? = null
+    private var tokenExpirationTime: Long = 0
+
     fun getCurrentUser(): FirebaseUser? {
         return firebaseAuth.currentUser
     }
 
     fun signOut() {
         firebaseAuth.signOut()
+        // Clear token cache when signing out
+        cachedIdToken = null
+        tokenExpirationTime = 0
     }
 
     suspend fun login(): AuthCredential? {
@@ -53,6 +65,7 @@ class AuthRepository @Inject constructor(
     private fun getCredentialRequest(): GetCredentialRequest {
         val googleIdOption = GetGoogleIdOption.Builder()
             .setServerClientId(webClientId)
+            .setFilterByAuthorizedAccounts(true)
             .setFilterByAuthorizedAccounts(false)
             .build()
 
@@ -77,7 +90,63 @@ class AuthRepository @Inject constructor(
                 .addOnFailureListener { continuation.resume(Result.failure(it)) }
         }
 
+    /**
+     * Get the current authentication token, refreshing if necessary
+     * @return The ID token string or null if not authenticated
+     */
+    private suspend fun getIdToken(forceRefresh: Boolean = false): String? {
+        val currentUser = getCurrentUser() ?: return null
+
+        // Check if we need to refresh the token
+        if (forceRefresh || isTokenExpired()) {
+            try {
+                // Force refresh the token
+                val tokenResult = currentUser.getIdToken(true).await()
+                cachedIdToken = tokenResult.token
+
+                // Calculate expiration time (Firebase tokens typically last 1 hour)
+                // We subtract 5 minutes to ensure we refresh before actual expiration
+                tokenExpirationTime = Date().time + (tokenResult.expirationTimestamp - tokenExpirationBuffer)
+
+                Log.d(TAG, "Token refreshed successfully")
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to refresh token: ${e.message}")
+                return null
+            }
+        } else if (cachedIdToken == null) {
+            // If we have no cached token but the token isn't expired, get it without forcing refresh
+            try {
+                val tokenResult = currentUser.getIdToken(false).await()
+                cachedIdToken = tokenResult.token
+                tokenExpirationTime = Date().time + (tokenResult.expirationTimestamp - tokenExpirationBuffer)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to get token: ${e.message}")
+                return null
+            }
+        }
+
+        return cachedIdToken
+    }
+
+    /**
+     * Check if the current token is expired or about to expire
+     * @return true if token is expired or will expire soon, false otherwise
+     */
+    private fun isTokenExpired(): Boolean {
+        val currentTime = Date().time
+        return cachedIdToken == null || currentTime >= tokenExpirationTime
+    }
+
+    /**
+     * Get authorization header with Bearer token
+     * @return Authorization header string or null if not authenticated
+     */
+    suspend fun getAuthorizationHeader(): String? {
+        val token = getIdToken() ?: return null
+        return "Bearer $token"
+    }
+
     companion object {
-        private const val TAG = "GoogleActivity"
+        private const val TAG = "AuthRepository"
     }
 }

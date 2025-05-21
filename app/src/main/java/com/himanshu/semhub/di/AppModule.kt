@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.himanshu.semhub.R
 import com.himanshu.semhub.data.remote.ApiService
 import com.himanshu.semhub.data.repository.AuthRepository
+import com.himanshu.semhub.data.repository.OnboardingRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -55,6 +56,13 @@ object AppModule {
         credentialManager: CredentialManager,
         @Named("webClientId") webClientId: String
     ): AuthRepository = AuthRepository(context, credentialManager, webClientId)
+
+    @Provides
+    @Singleton
+    fun provideOnboardingRepository(
+        apiService: ApiService,
+        authRepository: AuthRepository
+    ):OnboardingRepository = OnboardingRepository(apiService,authRepository)
 
 
     @Provides
