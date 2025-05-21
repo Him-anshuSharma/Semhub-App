@@ -10,5 +10,5 @@ data class Goal(
     @SerializedName("target_date")
     val targetDate: String?,
     @SerializedName("target_tasks")
-    val targetTasks: List<Task>
+    val targetTasks: List<String>
 )

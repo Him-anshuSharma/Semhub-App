@@ -2,8 +2,14 @@ package com.himanshu.semhub.di
 
 import android.content.Context
 import androidx.credentials.CredentialManager
+import androidx.room.Room
 import com.google.firebase.auth.FirebaseAuth
 import com.himanshu.semhub.R
+import com.himanshu.semhub.data.local.AppDatabase
+import com.himanshu.semhub.data.local.dao.GoalDao
+import com.himanshu.semhub.data.local.dao.GoalTaskCrossRefDao
+import com.himanshu.semhub.data.local.dao.SubtaskDao
+import com.himanshu.semhub.data.local.dao.TaskDao
 import com.himanshu.semhub.data.remote.ApiService
 import com.himanshu.semhub.data.repository.AuthRepository
 import com.himanshu.semhub.data.repository.OnboardingRepository
@@ -28,14 +34,46 @@ object AppModule {
         level = HttpLoggingInterceptor.Level.BODY // Logs request and response body
     }
 
+
     @Module
     @InstallIn(SingletonComponent::class)
     object FirebaseModule {
-
         @Provides
         fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
     }
 
+    // Database related providers
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+        return Room.databaseBuilder(
+            context.applicationContext,
+            AppDatabase::class.java,
+            "semhub_database"
+        )
+            .fallbackToDestructiveMigration(true)
+            .build()
+    }
+
+    @Provides
+    fun provideTaskDao(database: AppDatabase): TaskDao {
+        return database.taskDao()
+    }
+
+    @Provides
+    fun provideSubtaskDao(database: AppDatabase): SubtaskDao {
+        return database.subtaskDao()
+    }
+
+    @Provides
+    fun provideGoalDao(database: AppDatabase): GoalDao {
+        return database.goalDao()
+    }
+
+    @Provides
+    fun provideGoalTaskCrossRefDao(database: AppDatabase): GoalTaskCrossRefDao {
+        return database.goalTaskCrossRefDao()
+    }
 
     @Provides
     @Singleton
@@ -61,9 +99,19 @@ object AppModule {
     @Singleton
     fun provideOnboardingRepository(
         apiService: ApiService,
-        authRepository: AuthRepository
-    ):OnboardingRepository = OnboardingRepository(apiService,authRepository)
-
+        authRepository: AuthRepository,
+        taskDao: TaskDao,
+        subtaskDao: SubtaskDao,
+        goalDao: GoalDao,
+        goalTaskCrossRefDao: GoalTaskCrossRefDao
+    ): OnboardingRepository = OnboardingRepository(
+        apiService,
+        authRepository,
+        taskDao,
+        subtaskDao,
+        goalDao,
+        goalTaskCrossRefDao
+    )
 
     @Provides
     @Singleton
@@ -82,11 +130,9 @@ object AppModule {
             .build()
     }
 
-
     @Provides
     @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }
 }
-

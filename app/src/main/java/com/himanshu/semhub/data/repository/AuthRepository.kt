@@ -40,6 +40,10 @@ class AuthRepository @Inject constructor(
     private var cachedIdToken: String? = null
     private var tokenExpirationTime: Long = 0
 
+    fun getCachedToken():String?{
+        return cachedIdToken
+    }
+
     fun getCurrentUser(): FirebaseUser? {
         return firebaseAuth.currentUser
     }

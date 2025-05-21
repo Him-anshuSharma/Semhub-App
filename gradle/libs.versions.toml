@@ -38,6 +38,7 @@ testng = "6.9.6"
 supportAnnotations = "28.0.0"
 annotation = "1.9.1"
 media3CommonKtx = "1.6.0"
+roomRuntimeAndroid = "2.7.1"
 
 [libraries]
 androidx-activity-compose-v182 = { module = "androidx.activity:activity-compose", version.ref = "activityComposeVersion" }
@@ -92,6 +93,7 @@ testng = { group = "org.testng", name = "testng", version.ref = "testng" }
 support-annotations = { group = "com.android.support", name = "support-annotations", version.ref = "supportAnnotations" }
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
 androidx-media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3CommonKtx" }
+androidx-room-runtime-android = { group = "androidx.room", name = "room-runtime-android", version.ref = "roomRuntimeAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
