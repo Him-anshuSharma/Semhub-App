@@ -10,6 +10,8 @@ import com.himanshu.semhub.data.local.dao.GoalDao
 import com.himanshu.semhub.data.local.dao.GoalTaskCrossRefDao
 import com.himanshu.semhub.data.local.dao.SubtaskDao
 import com.himanshu.semhub.data.local.dao.TaskDao
+import com.himanshu.semhub.data.mapper.GoalMapper
+import com.himanshu.semhub.data.mapper.TaskMapper
 import com.himanshu.semhub.data.remote.ApiService
 import com.himanshu.semhub.data.repository.AuthRepository
 import com.himanshu.semhub.data.repository.OnboardingRepository
@@ -135,4 +137,5 @@ object AppModule {
     fun provideApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }
+
 }

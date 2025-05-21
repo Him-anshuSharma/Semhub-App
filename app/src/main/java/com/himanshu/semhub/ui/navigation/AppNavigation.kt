@@ -5,6 +5,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.himanshu.semhub.ui.screens.dashboard.DashboardScreen
 import com.himanshu.semhub.ui.screens.login.LoginScreen
 import com.himanshu.semhub.ui.screens.onboarding.OnboardingScreen
 import com.himanshu.semhub.ui.viewmodel.AuthViewModel
@@ -25,11 +26,11 @@ fun AppNavigation(
                 navController
             )
         }
-//        composable(Routes.DASHBOARD){
-//            DashboardScreen(
-//                navController
-//            )
-//        }
+        composable(Routes.DASHBOARD){
+            DashboardScreen(
+                navController
+            )
+        }
     }
 }
 

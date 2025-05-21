@@ -26,6 +26,9 @@ interface TaskDao {
     @Query("DELETE FROM tasks")
     suspend fun deleteAllTasks()
 
+    @Query("SELECT * FROM tasks ORDER BY id DESC LIMIT :limit")
+    fun getRecentTasks(limit: Int): Flow<List<TaskEntity>>
+
     @Query("SELECT COUNT(*) FROM tasks")
     suspend fun getTaskCount(): Int
 }

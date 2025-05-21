@@ -24,6 +24,12 @@ interface GoalDao {
     @Delete
     suspend fun deleteGoal(goal: GoalEntity)
 
+    @Query("SELECT COUNT(*) FROM goals")
+    suspend fun getGoalCount(): Int
+
+    @Query("SELECT * FROM goals ORDER BY id DESC LIMIT :limit")
+    fun getRecentGoals(limit: Int): Flow<List<GoalEntity>>
+
     @Query("DELETE FROM goals")
     suspend fun deleteAllGoals()
 }

@@ -151,7 +151,7 @@ class OnboardingViewModel @Inject constructor(
                 }
 
                 // Start onboarding process
-                startOnboarding(imageParts, audioParts.ifEmpty { null }, navController)
+                startOnboarding(imageParts, audioParts.ifEmpty { null })
             } catch (e: Exception) {
                 Log.e(TAG, "Error preparing files: ${e.message}", e)
                 _uiState.value = OnboardingUiState.Error("Failed to prepare files: ${e.message}")
@@ -167,7 +167,6 @@ class OnboardingViewModel @Inject constructor(
     private fun startOnboarding(
         images: List<MultipartBody.Part>,
         audios: List<MultipartBody.Part>? = null,
-        navController: NavController
     ) {
         viewModelScope.launch {
             try {
@@ -196,7 +195,6 @@ class OnboardingViewModel @Inject constructor(
                                                 // Only update UI state to Success after all operations complete
                                                 _uiState.value = OnboardingUiState.Success
 
-                                                // Navigation code would go here
                                             } else {
                                                 _progressState.value = ProgressState.Error("Failed to fetch goals")
                                                 _uiState.value = OnboardingUiState.Error("Failed to fetch goals")

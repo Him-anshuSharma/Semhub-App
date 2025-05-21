@@ -55,6 +55,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.himanshu.semhub.R
+import com.himanshu.semhub.ui.navigation.Routes
 import com.himanshu.semhub.ui.viewmodel.OnboardingUiState
 import com.himanshu.semhub.ui.viewmodel.OnboardingViewModel
 import com.himanshu.semhub.ui.viewmodel.ProgressState
@@ -79,6 +80,18 @@ fun OnboardingScreen(
             viewModel.clearSnackbarMessage()
         }
     }
+
+
+    // Navigate when progressState changes to Completed
+    LaunchedEffect(progressState) {
+        if (progressState == ProgressState.Completed) {
+            // Navigate to dashboard and remove onboarding from back stack
+            navController.navigate(Routes.DASHBOARD) {
+                popUpTo(Routes.ONBOARDING) { inclusive = true }
+            }
+        }
+    }
+
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
