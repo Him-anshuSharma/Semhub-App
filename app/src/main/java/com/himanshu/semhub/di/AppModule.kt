@@ -2,13 +2,10 @@ package com.himanshu.semhub.di
 
 import android.content.Context
 import androidx.credentials.CredentialManager
-import androidx.room.Room
 import com.google.firebase.auth.FirebaseAuth
 import com.himanshu.semhub.R
-import com.himanshu.semhub.data.local.AppDatabase
 import com.himanshu.semhub.data.remote.ApiService
 import com.himanshu.semhub.data.repository.AuthRepository
-import com.himanshu.semhub.data.repository.OnboardingRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,6 +18,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
+
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
@@ -79,40 +77,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
-        Room.databaseBuilder(context, AppDatabase::class.java, "app_db")
-            .fallbackToDestructiveMigration().build()
-
-
-    @Provides
-    @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
-    }
-
-    @Provides
-    fun provideTaskDao(appDatabase: AppDatabase): TaskDao {
-        return appDatabase.taskDao()
-    }
-
-    @Provides
-    fun provideSubtaskDao(appDatabase: AppDatabase): SubtaskDao {
-        return appDatabase.subtaskDao()
-    }
-
-    @Provides
-    fun provideGoalDao(appDatabase: AppDatabase): GoalDao {
-        return appDatabase.goalDao()
-    }
-
-    @Provides
-    @Singleton
-    fun provideOnboardingRepository(
-        apiService: ApiService,
-        appDatabase: AppDatabase,
-        @ApplicationContext context: Context
-    ): OnboardingRepository {
-        return OnboardingRepository(apiService, appDatabase, context)
     }
 }
 

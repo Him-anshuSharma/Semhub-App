@@ -44,20 +44,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.himanshu.semhub.R
 import com.himanshu.semhub.data.remote.ApiService
-import com.himanshu.semhub.data.repository.OnboardingRepository
-import com.himanshu.semhub.ui.navigation.AppNavigation
 import com.himanshu.semhub.ui.navigation.Routes
-import com.himanshu.semhub.ui.viewmodel.OnboardingViewModel
 import okhttp3.MultipartBody
 
 @Composable
@@ -371,7 +366,7 @@ fun OnboardingScreen(
         when (val state = onboardingState) {
             is OnboardingViewModel.OnboardingState.Success -> {
                 LaunchedEffect(state) {
-                    navController.navigate(Routes.Dashboard)
+                    navController.navigate(Routes.DASHBOARD)
                 }
             }
             is OnboardingViewModel.OnboardingState.Error -> {

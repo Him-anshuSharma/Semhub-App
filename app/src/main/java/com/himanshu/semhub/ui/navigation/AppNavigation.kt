@@ -15,18 +15,18 @@ fun AppNavigation(
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
-    val startDestination = if (authViewModel.getProfile() != null) "onboarding" else "login"
+    val startDestination = if (authViewModel.getProfile() != null) Routes.ONBOARDING else Routes.LOGIN
 
     NavHost(navController = navController, startDestination = startDestination) {
-        composable("login") {
+        composable(Routes.LOGIN) {
             LoginScreen(navController = navController)
         }
-        composable("onboarding") {
+        composable(Routes.ONBOARDING) {
             OnboardingScreen(
                 navController
             )
         }
-        composable("dashboard"){
+        composable(Routes.DASHBOARD){
             DashboardScreen(
                 navController
             )
@@ -35,7 +35,7 @@ fun AppNavigation(
 }
 
 object Routes{
-    val Login = "login"
-    val Onboarding = "onboarding"
-    val Dashboard = "dashboard"
+    const val LOGIN = "login"
+    const val ONBOARDING = "onboarding"
+    const val DASHBOARD = "dashboard"
 }
