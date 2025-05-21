@@ -1,5 +1,6 @@
 package com.himanshu.semhub.data.remote
 
+import com.himanshu.semhub.data.model.OnboardingResponse
 import okhttp3.MultipartBody
 import retrofit2.http.Header
 import retrofit2.http.Multipart
@@ -15,7 +16,7 @@ interface ApiService {
         @Header("Authorization") authHeader: String,
         @Part images: List<MultipartBody.Part>,
         @Part audios: List<MultipartBody.Part>?
-    ): String
+    ): OnboardingResponse
 }
 
 
