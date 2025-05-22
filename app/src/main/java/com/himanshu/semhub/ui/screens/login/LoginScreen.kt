@@ -1,42 +1,21 @@
 package com.himanshu.semhub.ui.screens.login
 
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.himanshu.semhub.R
 import com.himanshu.semhub.ui.screens.login.components.GoogleSignInButton
 import com.himanshu.semhub.ui.viewmodel.AuthViewModel
 import com.himanshu.semhub.ui.viewmodel.LoginState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     navController: NavController = rememberNavController(),
@@ -62,100 +41,102 @@ fun LoginScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        // Background Image
-        Image(
-            painter = painterResource(id = R.drawable.background),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // App Logo or Icon could go here
+                Spacer(modifier = Modifier.height(32.dp))
 
-        Row(modifier = Modifier.padding(10.dp)) {
-            Spacer(modifier = Modifier.weight(0.4f)) // Empty space on the left
-
-            Column(modifier = Modifier.weight(1f)) {
-                Spacer(modifier = Modifier.fillMaxHeight(0.3f)) // Top spacing
-
-                Box(
+                // Welcome Card
+                Card(
                     modifier = Modifier
-                        .fillMaxHeight(0.6f)
-                        .weight(1f),
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    shape = MaterialTheme.shapes.large,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 4.dp
+                    )
                 ) {
-                    // Main Box (Login Info)
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color(0xfffbf0e8), shape = RoundedCornerShape(5.dp))
-                            .border(
-                                BorderStroke(3.dp, Color(0xff988f90)),
-                                shape = RoundedCornerShape(5.dp)
-                            ),
-                        contentAlignment = Alignment.Center
+                    Column(
+                        modifier = Modifier.padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.SpaceEvenly,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "\uD83D\uDCC5 Get your timetable instantly with just one click! Sign in with your Google account for a seamless experience. Welcome aboard! \uD83C\uDF89",
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(horizontal = 10.dp)
-                            )
+                        // Welcome Header
+                        Text(
+                            text = "Welcome to SemHub",
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
 
-                            val isLoading = loginState is LoginState.Loading
-                            GoogleSignInButton(
-                                onClick = { viewModel.login() },
-                                enabled = !isLoading // ✅ Disable button while loading
-                            )
+                        // Description
+                        Text(
+                            text = "Get your timetable instantly with just one click! Sign in with your Google account for a seamless experience.",
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
 
-                            when (loginState) {
-                                is LoginState.Loading -> CircularProgressIndicator()
-                                is LoginState.Error -> {
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // Sign In Button
+                        val isLoading = loginState is LoginState.Loading
+                        GoogleSignInButton(
+                            onClick = { viewModel.login() },
+                            enabled = !isLoading
+                        )
+
+                        // Login State Handling
+                        when (loginState) {
+                            is LoginState.Loading -> {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(24.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                            is LoginState.Error -> {
+                                Card(
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.errorContainer
+                                    ),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
                                     Text(
-                                        (loginState as LoginState.Error).message,
-                                        color = Color.Red
+                                        text = (loginState as LoginState.Error).message,
+                                        color = MaterialTheme.colorScheme.onErrorContainer,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        modifier = Modifier.padding(16.dp),
+                                        textAlign = TextAlign.Center
                                     )
                                 }
-
-                                is LoginState.Success -> {
-                                    LaunchedEffect(loginState) { // ✅ Trigger every state change
-                                        Log.d("LoginScreen", "Success - Navigating to Home")
-                                    }
-                                }
-
-                                else -> {}
                             }
+                            is LoginState.Success -> {
+                                LaunchedEffect(loginState) {
+                                    Log.d("LoginScreen", "Success - Navigating to Home")
+                                }
+                            }
+                            else -> {}
                         }
-
-
                     }
-                    // Header Box
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.TopCenter)
-                            .offset(y = (-15).dp)
-                            .fillMaxWidth(0.5f)
-                            .background(Color(0xffb0dcd3), shape = RoundedCornerShape(5.dp))
-                            .border(
-                                BorderStroke(3.dp, Color(0xff988f90)),
-                                shape = RoundedCornerShape(5.dp)
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Hey, Welcome",
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(12.dp) // ✅ Increased padding for better visibility
-                        )
-                    }
-
                 }
-                Spacer(modifier = Modifier.fillMaxHeight(0.5f)) // Bottom spacing
+
+                Spacer(modifier = Modifier.height(48.dp))
             }
         }
     }
 }
-

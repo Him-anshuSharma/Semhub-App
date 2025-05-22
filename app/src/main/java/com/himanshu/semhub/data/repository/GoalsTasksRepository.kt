@@ -1,5 +1,6 @@
 package com.himanshu.semhub.data.repository
 
+import android.util.Log
 import com.himanshu.semhub.data.local.dao.GoalDao
 import com.himanshu.semhub.data.local.dao.GoalTaskCrossRefDao
 import com.himanshu.semhub.data.local.dao.TaskDao
@@ -13,6 +14,9 @@ import javax.inject.Inject
 class GoalsTasksRepository @Inject constructor(
     val taskDao: TaskDao, val goalDao: GoalDao, val goalTaskCrossRefDao: GoalTaskCrossRefDao
 ) {
+
+    val Tag = "GoalsTasksRepository"
+
     suspend fun getTotalGoals(): Int = goalDao.getGoalCount()
 
     suspend fun getTotalTasks(): Int = taskDao.getTaskCount()
@@ -37,11 +41,16 @@ class GoalsTasksRepository @Inject constructor(
     }
 
     suspend fun deleteTask(taskId:Int){
-        taskDao.deleteTaskFromId(taskId)
+        taskDao.deleteTaskById(taskId)
     }
 
     suspend fun deleteGoal(goalId:Int){
-        goalDao.getGoalById(goalId)
+        val tasksIds = goalTaskCrossRefDao.getTaskIdsForGoal(goalId)
+        Log.d(Tag,tasksIds.toString())
+        goalDao.deleteGoalById(goalId)
+        tasksIds.map { id->
+            taskDao.deleteTaskById(id)
+        }
     }
 
     suspend fun updateTaskStatus(taskId: Int, completed: Boolean) {

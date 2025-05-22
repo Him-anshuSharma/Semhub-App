@@ -8,7 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import com.himanshu.semhub.ui.screens.dashboard.DashboardScreen
 import com.himanshu.semhub.ui.screens.login.LoginScreen
 import com.himanshu.semhub.ui.screens.onboarding.OnboardingScreen
-import com.himanshu.semhub.ui.screens.tasksgoals.TasksGoalsScreen
+import com.himanshu.semhub.ui.screens.tasks.TasksGoalsScreen
 import com.himanshu.semhub.ui.viewmodel.AuthViewModel
 
 @Composable

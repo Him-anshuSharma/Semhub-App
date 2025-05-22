@@ -1,4 +1,5 @@
-package com.himanshu.semhub.ui.screens.tasksgoals
+package com.himanshu.semhub.ui.screens.tasks
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -68,7 +70,7 @@ fun TasksGoalsScreen(
                 NavigationBarItem(
                     selected = selectedTab == TaskGoalsViewModel.Tab.TASKS,
                     onClick = { viewModel.setTab(TaskGoalsViewModel.Tab.TASKS) },
-                    icon = { Icon(painter = painterResource(R.drawable.assignment), contentDescription = "Tasks") },
+                    icon = { Icon(painterResource(R.drawable.assignment), contentDescription = "Tasks") },
                     label = { Text("Tasks") }
                 )
                 NavigationBarItem(
@@ -91,7 +93,6 @@ fun TasksGoalsScreen(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
-
                 error != null -> {
                     ErrorMessage(
                         message = error!!,
@@ -99,7 +100,6 @@ fun TasksGoalsScreen(
                         onDismiss = { viewModel.clearError() }
                     )
                 }
-
                 else -> {
                     when (selectedTab) {
                         TaskGoalsViewModel.Tab.TASKS -> TasksList(
@@ -117,7 +117,6 @@ fun TasksGoalsScreen(
                                 viewModel.updateTaskPriority(taskId, priority)
                             }
                         )
-
                         TaskGoalsViewModel.Tab.GOALS -> GoalsList(
                             goals = goals,
                             onGoalClick = { goalId ->
@@ -125,9 +124,6 @@ fun TasksGoalsScreen(
                             },
                             onDeleteGoal = { goalId ->
                                 viewModel.deleteGoal(goalId)
-                            },
-                            onUpdateGoalStatus = { goalId, isCompleted ->
-                                viewModel.updateGoalStatus(goalId, isCompleted)
                             }
                         )
                     }
@@ -172,39 +168,6 @@ fun TasksList(
         }
     }
 }
-
-@Composable
-fun GoalsList(
-    goals: List<Goal>,
-    onGoalClick: (Int) -> Unit,
-    onDeleteGoal: (Int) -> Unit,
-    onUpdateGoalStatus: (Int, Boolean) -> Unit
-) {
-    if (goals.isEmpty()) {
-        EmptyState(
-            message = "No goals found",
-            painter = painterResource(R.drawable.flag)
-        )
-    } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(goals) { goal ->
-                GoalItem(
-                    goal = goal,
-                    onClick = { onGoalClick(goal.id!!) },
-                    onDelete = { onDeleteGoal(goal.id!!) },
-                    onStatusChange = { isCompleted ->
-                        onUpdateGoalStatus(goal.id!!, isCompleted)
-                    }
-                )
-            }
-        }
-    }
-}
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -256,7 +219,7 @@ fun TaskItem(
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
@@ -305,13 +268,11 @@ fun TaskItem(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
             // Task details section
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 48.dp) // Align with text after checkbox
+                    .padding(start = 48.dp)
             ) {
                 Text(
                     text = task.subject,
@@ -321,7 +282,6 @@ fun TaskItem(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Show task type
                 Text(
                     text = "Type: ${task.type}",
                     style = MaterialTheme.typography.bodySmall,
@@ -340,7 +300,7 @@ fun TaskItem(
                     task.deadline?.let {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
-                                imageVector = Icons.Default.DateRange,
+                                painter = painterResource(R.drawable.clock),
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(16.dp)
@@ -352,18 +312,6 @@ fun TaskItem(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                    }
-                }
-
-                // Show subtasks if any
-                task.subtasks?.let { subtasks ->
-                    if (subtasks.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "Subtasks: ${subtasks.size}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
                     }
                 }
             }
@@ -378,7 +326,7 @@ fun TaskItem(
         ) {
             listOf("high", "medium", "low").forEach { priority ->
                 DropdownMenuItem(
-                    text = { Text(priority.capitalize()) },
+                    text = { Text(priority.replaceFirstChar { it.uppercase() }) },
                     onClick = {
                         onPriorityChange(priority)
                         expanded = false
@@ -413,13 +361,40 @@ fun TaskItem(
     }
 }
 
+@Composable
+fun GoalsList(
+    goals: List<Goal>,
+    onGoalClick: (Int) -> Unit,
+    onDeleteGoal: (Int) -> Unit
+) {
+    if (goals.isEmpty()) {
+        EmptyState(
+            message = "No goals found",
+            painter = painterResource(R.drawable.flag)
+        )
+    } else {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(goals) { goal ->
+                GoalItem(
+                    goal = goal,
+                    onClick = { onGoalClick(goal.id!!) },
+                    onDelete = { onDeleteGoal(goal.id!!) }
+                )
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GoalItem(
     goal: Goal,
     onClick: () -> Unit,
-    onDelete: () -> Unit,
-    onStatusChange: (Boolean) -> Unit
+    onDelete: () -> Unit
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showOptionsMenu by remember { mutableStateOf(false) }
@@ -446,10 +421,14 @@ fun GoalItem(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.weight(1f)
                 ) {
-                    // Status checkbox
+                    // Checkbox that triggers goal deletion when checked
                     Checkbox(
                         checked = false,
-                        onCheckedChange = { onStatusChange(it) },
+                        onCheckedChange = {
+                            if (it) {
+                                showDeleteDialog = true
+                            }
+                        },
                         colors = CheckboxDefaults.colors(
                             checkedColor = MaterialTheme.colorScheme.secondary
                         )
@@ -460,7 +439,7 @@ fun GoalItem(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
 
@@ -495,13 +474,11 @@ fun GoalItem(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
             // Goal details section
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 48.dp) // Align with text after checkbox
+                    .padding(start = 48.dp)
             ) {
                 Text(
                     text = "Type: ${goal.type}",
@@ -514,7 +491,7 @@ fun GoalItem(
                 goal.targetDate?.let {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            imageVector = Icons.Default.DateRange,
+                            painter = painterResource(R.drawable.clock),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSecondaryContainer,
                             modifier = Modifier.size(16.dp)
@@ -548,7 +525,7 @@ fun GoalItem(
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
             title = { Text("Delete Goal") },
-            text = { Text("Are you sure you want to delete this goal?") },
+            text = { Text("Are you sure you want to delete this goal and all its associated tasks?") },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -567,7 +544,6 @@ fun GoalItem(
         )
     }
 }
-
 
 @Composable
 fun PriorityChip(priority: String) {
@@ -603,7 +579,7 @@ fun EmptyState(
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            painter = painter,
+            imageVector = Icons.Default.Warning,
             contentDescription = null,
             modifier = Modifier.size(64.dp),
             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
@@ -640,7 +616,8 @@ fun ErrorMessage(
         Text(
             text = message,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(16.dp))
         Row(

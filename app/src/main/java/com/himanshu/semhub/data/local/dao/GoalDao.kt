@@ -17,6 +17,9 @@ interface GoalDao {
     @Query("SELECT * FROM goals WHERE id = :goalId")
     suspend fun getGoalById(goalId: Int): GoalEntity?
 
+    @Query("DELETE FROM goals WHERE id = :goalId")
+    suspend fun deleteGoalById(goalId: Int)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertGoals(goals: List<GoalEntity>)
 
