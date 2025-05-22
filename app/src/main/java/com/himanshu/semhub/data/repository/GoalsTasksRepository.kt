@@ -35,4 +35,25 @@ class GoalsTasksRepository @Inject constructor(
         }
         return tasks
     }
+
+    suspend fun deleteTask(taskId:Int){
+        taskDao.deleteTaskFromId(taskId)
+    }
+
+    suspend fun deleteGoal(goalId:Int){
+        goalDao.getGoalById(goalId)
+    }
+
+    suspend fun updateTaskStatus(taskId: Int, completed: Boolean) {
+        taskDao.updateTaskStatus(taskId)
+    }
+
+    suspend fun updateTaskPriority(taskId: Int, priority: String) {
+        taskDao.updateTaskPriority(taskId, priority)
+    }
+
+    suspend fun updateGoalStatus(goalId: Int, completed: Boolean) {
+        goalDao.updateGoalStatus(goalId)
+    }
+
 }

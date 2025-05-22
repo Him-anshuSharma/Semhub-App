@@ -21,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.himanshu.semhub.R
 import com.himanshu.semhub.data.model.DashboardSummary
+import com.himanshu.semhub.ui.navigation.Routes
 import com.himanshu.semhub.ui.viewmodel.DashboardViewModel
 import com.himanshu.semhub.ui.viewmodel.ScreenState
 
@@ -147,7 +148,12 @@ fun DashboardScreen(
                         }
                     }
                     TextButton(
-                        onClick = { /* Navigate to all tasks */ },
+                        onClick = {
+                            navController.navigate(Routes.GOAL_TASK) {
+                                // Optional: Configure navigation options
+                                launchSingleTop = true
+                            }
+                        },
                         modifier = Modifier.align(Alignment.End)
                     ) {
                         Text("View all ${dashboardSummary.taskCount} tasks")

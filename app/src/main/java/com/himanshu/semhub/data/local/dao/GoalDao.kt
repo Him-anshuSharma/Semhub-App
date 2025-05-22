@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.himanshu.semhub.data.local.entities.GoalEntity
-import com.himanshu.semhub.data.model.Goal
 import kotlinx.coroutines.flow.Flow
 
 // GoalDao.kt
@@ -32,4 +31,8 @@ interface GoalDao {
 
     @Query("DELETE FROM goals")
     suspend fun deleteAllGoals()
+
+    // In GoalDao
+    @Query("DELETE FROM goals WHERE id = :goalId")
+    suspend fun updateGoalStatus(goalId: Int)
 }
