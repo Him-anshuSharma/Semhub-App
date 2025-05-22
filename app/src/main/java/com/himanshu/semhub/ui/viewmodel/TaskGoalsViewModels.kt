@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.himanshu.semhub.data.model.Goal
 import com.himanshu.semhub.data.model.Task
+import com.himanshu.semhub.data.repository.AuthRepository
 import com.himanshu.semhub.data.repository.GoalsTasksRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TaskGoalsViewModel @Inject constructor(
-    private val repository: GoalsTasksRepository
+    private val goalRepository: GoalsTasksRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val TAG = "TaskGoalsViewModel"
@@ -59,12 +61,12 @@ class TaskGoalsViewModel @Inject constructor(
             try {
                 when (_selectedTab.value) {
                     Tab.TASKS -> {
-                        val tasksList = repository.getTasks()
+                        val tasksList = goalRepository.getTasks()
                         _tasks.value = tasksList
                         Log.d(TAG, "Loaded ${tasksList.size} tasks")
                     }
                     Tab.GOALS -> {
-                        val goalsList = repository.getGoals()
+                        val goalsList = goalRepository.getGoals()
                         _goals.value = goalsList
                         Log.d(TAG, "Loaded ${goalsList.size} goals")
                     }
@@ -102,9 +104,10 @@ class TaskGoalsViewModel @Inject constructor(
     fun deleteTask(taskId: Int) {
         viewModelScope.launch {
             try {
-                repository.deleteTask(taskId)
+                val authHeader = authRepository.getAuthorizationHeader().toString()
+                goalRepository.deleteTask(taskId,authHeader)
                 // Refresh tasks list after deletion
-                val updatedTasks = repository.getTasks()
+                val updatedTasks = goalRepository.getTasks()
                 _tasks.value = updatedTasks
             } catch (e: Exception) {
                 Log.e(TAG, "Error deleting task", e)
@@ -119,9 +122,10 @@ class TaskGoalsViewModel @Inject constructor(
     fun deleteGoal(goalId: Int) {
         viewModelScope.launch {
             try {
-                repository.deleteGoal(goalId)
+                val authHeader = authRepository.getAuthorizationHeader().toString()
+                goalRepository.deleteGoal(goalId,authHeader)
                 // Refresh goals list after deletion
-                val updatedGoals = repository.getGoals()
+                val updatedGoals = goalRepository.getGoals()
                 _goals.value = updatedGoals
             } catch (e: Exception) {
                 Log.e(TAG, "Error deleting goal", e)
@@ -148,9 +152,9 @@ class TaskGoalsViewModel @Inject constructor(
     fun updateTaskStatus(taskId: Int, completed: Boolean) {
         viewModelScope.launch {
             try {
-                repository.updateTaskStatus(taskId, completed)
+                goalRepository.updateTaskStatus(taskId, completed)
                 // Refresh tasks list
-                val updatedTasks = repository.getTasks()
+                val updatedTasks = goalRepository.getTasks()
                 _tasks.value = updatedTasks
             } catch (e: Exception) {
                 Log.e(TAG, "Error updating task status", e)
@@ -162,9 +166,9 @@ class TaskGoalsViewModel @Inject constructor(
     fun updateTaskPriority(taskId: Int, priority: String) {
         viewModelScope.launch {
             try {
-                repository.updateTaskPriority(taskId, priority)
+                goalRepository.updateTaskPriority(taskId, priority)
                 // Refresh tasks list
-                val updatedTasks = repository.getTasks()
+                val updatedTasks = goalRepository.getTasks()
                 _tasks.value = updatedTasks
             } catch (e: Exception) {
                 Log.e(TAG, "Error updating task priority", e)
@@ -176,9 +180,9 @@ class TaskGoalsViewModel @Inject constructor(
     fun updateGoalStatus(goalId: Int, completed: Boolean) {
         viewModelScope.launch {
             try {
-                repository.updateGoalStatus(goalId, completed)
+                goalRepository.updateGoalStatus(goalId, completed)
                 // Refresh goals list
-                val updatedGoals = repository.getGoals()
+                val updatedGoals = goalRepository.getGoals()
                 _goals.value = updatedGoals
             } catch (e: Exception) {
                 Log.e(TAG, "Error updating goal status", e)

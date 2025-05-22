@@ -8,11 +8,13 @@ import com.himanshu.semhub.data.mapper.GoalMapper
 import com.himanshu.semhub.data.mapper.TaskMapper
 import com.himanshu.semhub.data.model.Goal
 import com.himanshu.semhub.data.model.Task
+import com.himanshu.semhub.data.remote.ApiService
 import kotlinx.coroutines.flow.first
+import okhttp3.internal.http2.Header
 import javax.inject.Inject
 
 class GoalsTasksRepository @Inject constructor(
-    val taskDao: TaskDao, val goalDao: GoalDao, val goalTaskCrossRefDao: GoalTaskCrossRefDao
+    val taskDao: TaskDao, val goalDao: GoalDao, val goalTaskCrossRefDao: GoalTaskCrossRefDao,val apiService: ApiService
 ) {
 
     val Tag = "GoalsTasksRepository"
@@ -40,11 +42,14 @@ class GoalsTasksRepository @Inject constructor(
         return tasks
     }
 
-    suspend fun deleteTask(taskId:Int){
+    suspend fun deleteTask(taskId:Int,authHeader: String){
+        apiService.deleteTask(taskId,authHeader)
         taskDao.deleteTaskById(taskId)
     }
 
-    suspend fun deleteGoal(goalId:Int){
+    suspend fun deleteGoal(goalId:Int,authHeader: String){
+
+        apiService.deleteGoal(goalId,authHeader)
         val tasksIds = goalTaskCrossRefDao.getTaskIdsForGoal(goalId)
         Log.d(Tag,tasksIds.toString())
         goalDao.deleteGoalById(goalId)

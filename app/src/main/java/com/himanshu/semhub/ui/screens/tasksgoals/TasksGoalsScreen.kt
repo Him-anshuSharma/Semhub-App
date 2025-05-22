@@ -1,4 +1,4 @@
-package com.himanshu.semhub.ui.screens.tasks
+package com.himanshu.semhub.ui.screens.tasksgoals
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -506,7 +506,7 @@ fun GoalItem(
                 }
 
                 // Show associated tasks
-                goal.targetTasks?.let { taskIds ->
+                goal.targetTasks.let { taskIds ->
                     if (taskIds.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
@@ -579,7 +579,7 @@ fun EmptyState(
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            imageVector = Icons.Default.Warning,
+            painter = painter,
             contentDescription = null,
             modifier = Modifier.size(64.dp),
             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
