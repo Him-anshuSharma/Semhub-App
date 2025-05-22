@@ -34,8 +34,4 @@ fun AppNavigation(
     }
 }
 
-object Routes{
-    const val LOGIN = "login"
-    const val ONBOARDING = "onboarding"
-    const val DASHBOARD = "dashboard"
-}
+

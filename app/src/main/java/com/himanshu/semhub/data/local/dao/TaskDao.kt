@@ -31,4 +31,5 @@ interface TaskDao {
 
     @Query("SELECT COUNT(*) FROM tasks")
     suspend fun getTaskCount(): Int
+
 }

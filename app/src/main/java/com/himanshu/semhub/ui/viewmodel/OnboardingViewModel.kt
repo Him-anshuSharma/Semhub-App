@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.himanshu.semhub.data.repository.OnboardingRepository
+import com.himanshu.semhub.ui.navigation.Routes
 import com.himanshu.semhub.utils.uriToFile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -34,7 +35,13 @@ class OnboardingViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            Log.d(TAG, onboardingRepository.getToken().toString())
+            val isOnboarded = onboardingRepository.isUserOnboarded()
+            if(isOnboarded){
+                _progressState.value = ProgressState.Completed
+            }
+            else{
+                onboardingRepository.getToken().toString()
+            }
         }
     }
 

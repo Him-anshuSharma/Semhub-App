@@ -149,56 +149,12 @@ class OnboardingRepository @Inject constructor(
         }
     }.flowOn(Dispatchers.IO)
 
-    // Get tasks from local database
-    // In OnboardingRepository.kt
-    fun getLocalTasks(): Flow<List<Task>> {
-        return taskDao.getAllTasks()
-            .map { taskEntities ->
-                taskEntities.map { taskEntity ->
-                    // Get subtasks for this task
-                    val subtasks = subtaskDao.getSubtasksForTask(taskEntity.id).first()
-                    // Convert TaskEntity to Task using your mapper
-                    TaskMapper.mapFromEntity(taskEntity, subtasks)
-                }
-            }
-    }
 
-
-    // Get goals from local database
-    fun getLocalGoals(): Flow<List<Goal>> {
-        return goalDao.getAllGoals()
-            .map { goalEntities ->
-                goalEntities.map { goalEntity ->
-                    // Get task IDs for this goal
-                    val targetTasks = goalTaskCrossRefDao.getTaskIdsForGoal(goalEntity.id)
-                    // Convert GoalEntity to Goal using your mapper
-                    GoalMapper.mapFromEntity(goalEntity, targetTasks)
-                }
-            }
-    }
-
-    // Get subtasks for a task from local database
-    fun getSubtasksForTask(taskId: Int): Flow<List<Subtask>> {
-        return subtaskDao.getSubtasksForTask(taskId)
-            .map { subtaskEntities ->
-                // Convert SubtaskEntity objects to Subtask objects
-                subtaskEntities.map { subtaskEntity ->
-                    SubtaskMapper.mapFromEntity(subtaskEntity)
-                }
-            }
-    }
-
-
-    // Get tasks for a specific goal from local database
-    fun getTasksForGoal(goalId: Int): Flow<List<Task>> {
-        return goalTaskCrossRefDao.getTasksForGoal(goalId)
-    }
-
-    fun isUserOnboarded(): Flow<Boolean> = flow {
+    suspend fun isUserOnboarded(): Boolean  {
         // Check if we have any tasks or goals in the database
         // If we do, the user has been onboarded
         val taskCount = taskDao.getTaskCount()
-        val isOnboarded = taskCount > 0
-        emit(isOnboarded)
-    }.flowOn(Dispatchers.IO)
+        return taskCount > 0
+
+    }
 }
