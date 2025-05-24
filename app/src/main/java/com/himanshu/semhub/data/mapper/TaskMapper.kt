@@ -13,7 +13,8 @@ object TaskMapper {
             subject = task.subject,
             priority = task.priority,
             deadline = task.deadline,
-            estimatedHours = task.estimatedHours
+            estimatedHours = task.estimatedHours,
+
         )
     }
 

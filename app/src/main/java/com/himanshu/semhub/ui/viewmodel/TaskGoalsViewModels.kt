@@ -152,7 +152,7 @@ class TaskGoalsViewModel @Inject constructor(
     fun updateTaskStatus(taskId: Int, completed: Boolean) {
         viewModelScope.launch {
             try {
-                goalRepository.updateTaskStatus(taskId, completed)
+                goalRepository.updateTaskStatus(taskId)
                 // Refresh tasks list
                 val updatedTasks = goalRepository.getTasks()
                 _tasks.value = updatedTasks
@@ -180,7 +180,7 @@ class TaskGoalsViewModel @Inject constructor(
     fun updateGoalStatus(goalId: Int, completed: Boolean) {
         viewModelScope.launch {
             try {
-                goalRepository.updateGoalStatus(goalId, completed)
+                goalRepository.updateGoalStatus(goalId)
                 // Refresh goals list
                 val updatedGoals = goalRepository.getGoals()
                 _goals.value = updatedGoals

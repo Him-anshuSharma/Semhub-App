@@ -46,6 +46,10 @@ class DashboardViewModel @Inject constructor(
                 val tasks = goalTaskRepository.getTasks()
                 Log.d(TAG, "Loaded tasks: ${tasks.size}")
                 _tasks.value = tasks
+                for(task in tasks){
+                    val subtasks = task.subtasks
+                    Log.d(TAG, "Subtasks for task ${task.title}: $subtasks")
+                }
 
                 val goals = goalTaskRepository.getGoals()
                 Log.d(TAG, "Loaded goals: ${goals.size}")

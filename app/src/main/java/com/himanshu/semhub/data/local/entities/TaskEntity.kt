@@ -15,7 +15,7 @@ data class TaskEntity(
     val priority: String?,
     val deadline: String?,
     @ColumnInfo(name = "estimated_hours")
-    val estimatedHours: Int?,
+    val estimatedHours: String?,
 ){
 
 

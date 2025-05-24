@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
 
 @Entity(
     tableName = "subtasks",
@@ -19,8 +20,9 @@ import androidx.room.PrimaryKey
 )
 data class SubtaskEntity(
     @PrimaryKey(autoGenerate = true)
-    val subtaskId: Int = 0,
+    val id: Int = 0,
     val taskId: Int,
     val title: String,
-    val completed: Boolean = false
+    @SerializedName("estimated_hours")
+    val estimatedHours: String
 )

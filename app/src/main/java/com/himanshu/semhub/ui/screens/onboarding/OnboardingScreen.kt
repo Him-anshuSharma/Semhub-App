@@ -298,7 +298,7 @@ fun OnboardingScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    CircularProgressIndicator()
+                    //CircularProgressIndicator()
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = when (progressState) {
@@ -306,7 +306,7 @@ fun OnboardingScreen(
                             is ProgressState.Onboarding -> "Creating your profile..."
                             is ProgressState.FetchingTasks -> "Loading your tasks..."
                             is ProgressState.FetchingGoals -> "Loading your goals..."
-                            is ProgressState.Error -> "Error: ${(progressState as ProgressState.Error).message}"
+                            //is ProgressState.Error -> "Error: ${(progressState as ProgressState.Error).message}"
                             else -> ""
                         },
                         style = MaterialTheme.typography.bodyMedium
@@ -373,12 +373,12 @@ fun OnboardingScreen(
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
-                    Button(
-                        onClick = { viewModel.retryOnboarding(navController) },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Try Again")
-                    }
+//                    Button(
+//                        onClick = { viewModel.retryOnboarding(navController) },
+//                        modifier = Modifier.fillMaxWidth()
+//                    ) {
+//                        Text("Try Again")
+//                    }
                 }
                 else -> { /* Initial or Loading state handled above */ }
             }

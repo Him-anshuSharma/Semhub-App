@@ -10,6 +10,6 @@ data class Task(
     val priority: String?,
     val deadline: String?,
     @SerializedName("estimated_hours")
-    val estimatedHours: Int?,
+    val estimatedHours: String?,
     val subtasks: List<Subtask>? = null
 )

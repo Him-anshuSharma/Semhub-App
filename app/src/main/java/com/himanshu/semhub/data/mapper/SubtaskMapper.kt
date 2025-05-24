@@ -6,18 +6,19 @@ import com.himanshu.semhub.data.model.Subtask
 object SubtaskMapper {
     fun mapToEntity(subtask: Subtask, taskId: Int): SubtaskEntity {
         return SubtaskEntity(
-            subtaskId = subtask.id ?: 0,
+            id = subtask.id ?: 0,
             taskId = taskId,
             title = subtask.title,
-            completed = subtask.completed ?: false
+            estimatedHours = subtask.estimatedHours ?: "0"
         )
     }
 
     fun mapFromEntity(entity: SubtaskEntity): Subtask {
         return Subtask(
-            id = entity.subtaskId,
+            id = entity.id,
             title = entity.title,
-            completed = entity.completed
+            taskId = entity.taskId,
+            estimatedHours = entity.estimatedHours
         )
     }
 }

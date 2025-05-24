@@ -22,6 +22,7 @@ import androidx.navigation.NavController
 import com.himanshu.semhub.R
 import com.himanshu.semhub.data.model.Goal
 import com.himanshu.semhub.data.model.Task
+import com.himanshu.semhub.ui.navigation.Routes
 import com.himanshu.semhub.ui.viewmodel.TaskGoalsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -105,7 +106,8 @@ fun TasksGoalsScreen(
                         TaskGoalsViewModel.Tab.TASKS -> TasksList(
                             tasks = tasks,
                             onTaskClick = { taskId ->
-                                // Navigate to task details
+                                // Placeholder for Task detail navigation if needed
+                                // For now, no navigation for Tasks, or you can implement a separate route
                             },
                             onDeleteTask = { taskId ->
                                 viewModel.deleteTask(taskId)
@@ -120,7 +122,7 @@ fun TasksGoalsScreen(
                         TaskGoalsViewModel.Tab.GOALS -> GoalsList(
                             goals = goals,
                             onGoalClick = { goalId ->
-                                // Navigate to goal details
+                                navController.navigate("${Routes.GOAL_TASK_DETAIL}/$goalId")
                             },
                             onDeleteGoal = { goalId ->
                                 viewModel.deleteGoal(goalId)
@@ -155,13 +157,13 @@ fun TasksList(
             items(tasks) { task ->
                 TaskItem(
                     task = task,
-                    onClick = { onTaskClick(task.id!!) },
-                    onDelete = { onDeleteTask(task.id!!) },
+                    onClick = { task.id?.let { onTaskClick(it) } ?: Unit },
+                    onDelete = { task.id?.let { onDeleteTask(it) } ?: Unit },
                     onStatusChange = { isCompleted ->
-                        onUpdateTaskStatus(task.id!!, isCompleted)
+                        task.id?.let { onUpdateTaskStatus(it, isCompleted) } ?: Unit
                     },
                     onPriorityChange = { priority ->
-                        onUpdateTaskPriority(task.id!!, priority)
+                        task.id?.let { onUpdateTaskPriority(it, priority) } ?: Unit
                     }
                 )
             }
@@ -204,7 +206,6 @@ fun TaskItem(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.weight(1f)
                 ) {
-                    // Status checkbox
                     Checkbox(
                         checked = false,
                         onCheckedChange = { onStatusChange(it) },
@@ -224,7 +225,6 @@ fun TaskItem(
                     }
                 }
 
-                // Options menu
                 Box {
                     IconButton(onClick = { showOptionsMenu = true }) {
                         Icon(
@@ -268,7 +268,6 @@ fun TaskItem(
                 }
             }
 
-            // Task details section
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -318,7 +317,6 @@ fun TaskItem(
         }
     }
 
-    // Priority selection menu
     Box(modifier = Modifier.fillMaxWidth()) {
         DropdownMenu(
             expanded = expanded,
@@ -336,7 +334,6 @@ fun TaskItem(
         }
     }
 
-    // Delete confirmation dialog
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
@@ -381,8 +378,8 @@ fun GoalsList(
             items(goals) { goal ->
                 GoalItem(
                     goal = goal,
-                    onClick = { onGoalClick(goal.id!!) },
-                    onDelete = { onDeleteGoal(goal.id!!) }
+                    onClick = { goal.id?.let { onGoalClick(it) } ?: Unit },
+                    onDelete = { goal.id?.let { onDeleteGoal(it) } ?: Unit }
                 )
             }
         }
@@ -421,7 +418,6 @@ fun GoalItem(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.weight(1f)
                 ) {
-                    // Checkbox that triggers goal deletion when checked
                     Checkbox(
                         checked = false,
                         onCheckedChange = {
@@ -443,7 +439,6 @@ fun GoalItem(
                     )
                 }
 
-                // Options menu
                 Box {
                     IconButton(onClick = { showOptionsMenu = true }) {
                         Icon(
@@ -474,7 +469,6 @@ fun GoalItem(
                 }
             }
 
-            // Goal details section
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -505,8 +499,7 @@ fun GoalItem(
                     }
                 }
 
-                // Show associated tasks
-                goal.targetTasks.let { taskIds ->
+                goal.targetTasks?.let { taskIds ->
                     if (taskIds.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
@@ -520,7 +513,6 @@ fun GoalItem(
         }
     }
 
-    // Delete confirmation dialog
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },

@@ -11,15 +11,12 @@ import com.himanshu.semhub.data.mapper.SubtaskMapper
 import com.himanshu.semhub.data.mapper.TaskMapper
 import com.himanshu.semhub.data.model.Goal
 import com.himanshu.semhub.data.model.OnboardingResponse
-import com.himanshu.semhub.data.model.Subtask
 import com.himanshu.semhub.data.model.Task
 import com.himanshu.semhub.data.remote.ApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 import javax.inject.Inject
@@ -34,7 +31,6 @@ class OnboardingRepository @Inject constructor(
     private val goalDao: GoalDao,
     private val goalTaskCrossRefDao: GoalTaskCrossRefDao
 ) {
-    private val TAG = "OnboardingRepository"
 
     suspend fun getToken(): String? {
         return authRepository.getAuthorizationHeader().toString()
@@ -53,10 +49,10 @@ class OnboardingRepository @Inject constructor(
                 val response = apiService.onboard(authHeader, images, audios)
                 emit(Result.success(response))
 
-                Log.d(TAG,response.toString())
+                Log.d(TAG, response.toString())
 
                 // Save user ID from response if needed
-                response.data.userId?.let { id ->
+                response.data.userId.let { id ->
                     Log.d(TAG, "Onboarding successful for user ID: $id")
 
                     // Fetch and save goals and tasks after successful onboarding
@@ -65,7 +61,6 @@ class OnboardingRepository @Inject constructor(
             } else {
                 // User is not authenticated
                 emit(Result.failure(IllegalStateException("User not authenticated")))
-                Unit
             }
         } catch (e: Exception) {
             emit(Result.failure(e))
@@ -96,14 +91,26 @@ class OnboardingRepository @Inject constructor(
                 goals.forEach { goal ->
                     goal.id?.let { goalId ->
                         goal.targetTasks.forEach { taskId ->
-                            crossRefs.add(GoalTaskCrossRef(
-                                goalId = goalId,
-                                taskId = taskId.toInt()
-                            ))
+                            crossRefs.add(
+                                GoalTaskCrossRef(
+                                    goalId = goalId,
+                                    taskId = taskId.toInt()
+                                )
+                            )
                         }
                     }
                 }
                 goalTaskCrossRefDao.insertGoalTaskCrossRefs(crossRefs)
+
+                //save subtasks
+                for (task in tasks) {
+                    val subtaskEntities = task.subtasks?.let {
+                        it.map {
+                            SubtaskMapper.mapToEntity(it, task.id!!)
+                        }
+                    }
+                    if(subtaskEntities!=null) subtaskDao.insertSubtasks(subtaskEntities)
+                }
 
                 Log.d(TAG, "Successfully saved all data to local database")
             } catch (e: Exception) {
@@ -123,7 +130,6 @@ class OnboardingRepository @Inject constructor(
                 Log.d(TAG, "Successfully fetched ${response.size} tasks")
             } else {
                 emit(Result.failure(IllegalStateException("User not authenticated")))
-                Unit
             }
         } catch (e: Exception) {
             emit(Result.failure(e))
@@ -141,7 +147,6 @@ class OnboardingRepository @Inject constructor(
                 Log.d(TAG, "Successfully fetched ${response.size} goals")
             } else {
                 emit(Result.failure(IllegalStateException("User not authenticated")))
-                Unit
             }
         } catch (e: Exception) {
             emit(Result.failure(e))
@@ -150,11 +155,15 @@ class OnboardingRepository @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
 
-    suspend fun isUserOnboarded(): Boolean  {
+    suspend fun isUserOnboarded(): Boolean {
         // Check if we have any tasks or goals in the database
         // If we do, the user has been onboarded
         val taskCount = taskDao.getTaskCount()
         return taskCount > 0
 
+    }
+
+    companion object{
+        private const val TAG = "OnboardingRepository"
     }
 }

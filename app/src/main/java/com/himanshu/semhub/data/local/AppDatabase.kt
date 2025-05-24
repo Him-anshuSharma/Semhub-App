@@ -17,7 +17,7 @@ import com.himanshu.semhub.data.model.converter.SubtaskConverter
 
 @Database(
     entities = [TaskEntity::class, SubtaskEntity::class, GoalEntity::class, GoalTaskCrossRef::class],
-    version = 5,
+    version = 11,
     exportSchema = false
 )
 @TypeConverters(SubtaskConverter::class)
