@@ -1,4 +1,4 @@
-package com.himanshu.semhub.ui.screens.tasksgoals
+package com.himanshu.semhub.ui.screens.goalsAndTasks
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,7 +23,6 @@ import com.himanshu.semhub.R
 import com.himanshu.semhub.data.model.Goal
 import com.himanshu.semhub.data.model.Task
 import com.himanshu.semhub.ui.navigation.Routes
-import com.himanshu.semhub.ui.viewmodel.TaskGoalsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

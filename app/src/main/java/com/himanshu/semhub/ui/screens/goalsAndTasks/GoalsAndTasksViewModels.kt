@@ -1,4 +1,4 @@
-package com.himanshu.semhub.ui.viewmodel
+package com.himanshu.semhub.ui.screens.goalsAndTasks
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.himanshu.semhub.data.model.Goal
 import com.himanshu.semhub.data.model.Task
 import com.himanshu.semhub.data.repository.AuthRepository
-import com.himanshu.semhub.data.repository.GoalsTasksRepository
+import com.himanshu.semhub.data.repository.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TaskGoalsViewModel @Inject constructor(
-    private val goalRepository: GoalsTasksRepository,
+    private val goalRepository: UserDataRepository,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 

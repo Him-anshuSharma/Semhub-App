@@ -1,12 +1,11 @@
-package com.himanshu.semhub.data.local.relationships
+package com.himanshu.semhub.data.localDb.relationships
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
-import com.himanshu.semhub.data.local.entities.GoalEntity
-import com.himanshu.semhub.data.local.entities.TaskEntity
+import com.himanshu.semhub.data.localDb.entities.GoalEntity
+import com.himanshu.semhub.data.localDb.entities.TaskEntity
 
-// GoalTaskCrossRef.kt - Junction table for many-to-many relationship
 @Entity(
     tableName = "goal_task_cross_ref",
     primaryKeys = ["goalId", "taskId"],

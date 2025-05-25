@@ -1,4 +1,4 @@
-package com.himanshu.semhub.ui.viewmodel
+package com.himanshu.semhub.ui.screens.onboarding
 
 import android.content.Context
 import android.net.Uri
@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.himanshu.semhub.data.repository.OnboardingRepository
-import com.himanshu.semhub.ui.navigation.Routes
 import com.himanshu.semhub.utils.uriToFile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext

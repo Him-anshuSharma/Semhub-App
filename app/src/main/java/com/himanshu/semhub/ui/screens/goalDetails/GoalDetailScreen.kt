@@ -1,4 +1,4 @@
-package com.himanshu.semhub.ui.screens.tasksgoals
+package com.himanshu.semhub.ui.screens.goalDetails
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,14 +38,13 @@ import androidx.navigation.NavController
 import com.himanshu.semhub.data.model.Goal
 import com.himanshu.semhub.data.model.Subtask
 import com.himanshu.semhub.data.model.Task
-import com.himanshu.semhub.ui.viewmodel.GoalTaskDetailsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GoalTaskDetailScreen(
     goalId: Int,
     navController: NavController,
-    viewModel: GoalTaskDetailsViewModel = hiltViewModel()
+    viewModel: GoalDetailsViewModel = hiltViewModel()
 ) {
     // Collect state from ViewModel (assuming these are provided as StateFlow)
     val goal by viewModel.selectedGoal.collectAsState()

@@ -56,9 +56,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.himanshu.semhub.R
 import com.himanshu.semhub.ui.navigation.Routes
-import com.himanshu.semhub.ui.viewmodel.OnboardingUiState
-import com.himanshu.semhub.ui.viewmodel.OnboardingViewModel
-import com.himanshu.semhub.ui.viewmodel.ProgressState
 
 @Composable
 fun OnboardingScreen(

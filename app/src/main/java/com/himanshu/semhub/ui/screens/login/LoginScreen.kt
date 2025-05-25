@@ -12,8 +12,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.himanshu.semhub.ui.screens.login.components.GoogleSignInButton
-import com.himanshu.semhub.ui.viewmodel.AuthViewModel
-import com.himanshu.semhub.ui.viewmodel.LoginState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

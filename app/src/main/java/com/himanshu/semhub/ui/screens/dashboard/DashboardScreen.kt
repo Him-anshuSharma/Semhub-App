@@ -22,8 +22,6 @@ import androidx.navigation.NavController
 import com.himanshu.semhub.R
 import com.himanshu.semhub.data.model.DashboardSummary
 import com.himanshu.semhub.ui.navigation.Routes
-import com.himanshu.semhub.ui.viewmodel.DashboardViewModel
-import com.himanshu.semhub.ui.viewmodel.ScreenState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

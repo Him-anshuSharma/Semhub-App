@@ -1,9 +1,10 @@
-package com.himanshu.semhub.ui.viewmodel
+package com.himanshu.semhub.ui.screens.goalDetails
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.himanshu.semhub.data.model.Goal
 import com.himanshu.semhub.data.model.Task
-import com.himanshu.semhub.data.repository.GoalsTasksRepository
+import com.himanshu.semhub.data.repository.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,8 +12,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-open class GoalTaskDetailsViewModel @Inject constructor(
-    private val repository: GoalsTasksRepository
+open class GoalDetailsViewModel @Inject constructor(
+    private val repository: UserDataRepository
 ) : ViewModel() {
 
     private val _selectedGoal = MutableStateFlow<Goal?>(null)

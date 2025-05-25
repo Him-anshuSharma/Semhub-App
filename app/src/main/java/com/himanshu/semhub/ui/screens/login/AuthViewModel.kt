@@ -1,4 +1,4 @@
-package com.himanshu.semhub.ui.viewmodel
+package com.himanshu.semhub.ui.screens.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

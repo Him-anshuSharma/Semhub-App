@@ -10,9 +10,9 @@ import androidx.navigation.navArgument
 import com.himanshu.semhub.ui.screens.dashboard.DashboardScreen
 import com.himanshu.semhub.ui.screens.login.LoginScreen
 import com.himanshu.semhub.ui.screens.onboarding.OnboardingScreen
-import com.himanshu.semhub.ui.screens.tasksgoals.GoalTaskDetailScreen
-import com.himanshu.semhub.ui.screens.tasksgoals.TasksGoalsScreen
-import com.himanshu.semhub.ui.viewmodel.AuthViewModel
+import com.himanshu.semhub.ui.screens.goalDetails.GoalTaskDetailScreen
+import com.himanshu.semhub.ui.screens.goalsAndTasks.TasksGoalsScreen
+import com.himanshu.semhub.ui.screens.login.AuthViewModel
 
 @Composable
 fun AppNavigation(

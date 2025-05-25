@@ -1,10 +1,10 @@
-package com.himanshu.semhub.data.local.dao
+package com.himanshu.semhub.data.localDb.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.himanshu.semhub.data.local.relationships.GoalTaskCrossRef
+import com.himanshu.semhub.data.localDb.relationships.GoalTaskCrossRef
 import com.himanshu.semhub.data.model.Task
 import kotlinx.coroutines.flow.Flow
 

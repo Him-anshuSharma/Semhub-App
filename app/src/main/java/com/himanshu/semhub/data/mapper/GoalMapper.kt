@@ -1,6 +1,6 @@
 package com.himanshu.semhub.data.mapper
 
-import com.himanshu.semhub.data.local.entities.GoalEntity
+import com.himanshu.semhub.data.localDb.entities.GoalEntity
 import com.himanshu.semhub.data.model.Goal
 
 object GoalMapper {

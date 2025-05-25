@@ -1,4 +1,4 @@
-package com.himanshu.semhub.data.local.entities
+package com.himanshu.semhub.data.localDb.entities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
