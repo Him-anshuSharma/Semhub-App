@@ -1,4 +1,4 @@
-package com.himanshu.semhub.data.localDb.converter
+package com.himanshu.semhub.data.local.converter
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson

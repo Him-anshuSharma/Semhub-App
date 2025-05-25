@@ -1,5 +1,7 @@
 package com.himanshu.semhub.ui.screens.goalsAndTasks
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,6 +25,8 @@ import com.himanshu.semhub.R
 import com.himanshu.semhub.data.model.Goal
 import com.himanshu.semhub.data.model.Task
 import com.himanshu.semhub.ui.navigation.Routes
+import java.text.Format
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -189,7 +193,8 @@ fun TaskItem(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
             modifier = Modifier
@@ -201,29 +206,24 @@ fun TaskItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                Column(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Checkbox(
-                        checked = false,
-                        onCheckedChange = { onStatusChange(it) },
-                        colors = CheckboxDefaults.colors(
-                            checkedColor = MaterialTheme.colorScheme.primary
-                        )
+                    Text(
+                        text = task.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = MaterialTheme.colorScheme.primary
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Column {
-                        Text(
-                            text = task.title,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = task.subject,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
-
                 Box {
                     IconButton(onClick = { showOptionsMenu = true }) {
                         Icon(
@@ -231,7 +231,6 @@ fun TaskItem(
                             contentDescription = "More options"
                         )
                     }
-
                     DropdownMenu(
                         expanded = showOptionsMenu,
                         onDismissRequest = { showOptionsMenu = false }
@@ -266,36 +265,25 @@ fun TaskItem(
                     }
                 }
             }
-
+            Spacer(modifier = Modifier.height(8.dp))
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 48.dp)
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = task.subject,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
                 Text(
                     text = "Type: ${task.type}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-
                 Spacer(modifier = Modifier.height(8.dp))
-
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     task.priority?.let {
                         PriorityChip(priority = it)
-                        Spacer(modifier = Modifier.width(8.dp))
                     }
-                    task.deadline?.let {
+                    task.deadline?.let { deadline ->
+                        val formattedDeadline = formatDeadline(deadline)
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 painter = painterResource(R.drawable.clock),
@@ -305,17 +293,35 @@ fun TaskItem(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "Due: $it",
+                                text = "Due: $formattedDeadline",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
                 }
+                Spacer(modifier = Modifier.height(16.dp))
+                ElevatedButton(
+                    onClick = { onStatusChange(true) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.elevatedButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                    )
+                ) {
+                    Text(
+                        text = "Mark Complete",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
             }
         }
     }
 
+    // Priority selection dropdown
     Box(modifier = Modifier.fillMaxWidth()) {
         DropdownMenu(
             expanded = expanded,
@@ -333,6 +339,7 @@ fun TaskItem(
         }
     }
 
+    // Delete confirmation dialog
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
@@ -356,6 +363,23 @@ fun TaskItem(
         )
     }
 }
+
+// Helper function to format deadline using SimpleDateFormat
+@Composable
+fun formatDeadline(deadline: String): String {
+    return try {
+        // Use SimpleDateFormat to parse and format the date
+        val inputFormat = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+        val outputFormat = java.text.SimpleDateFormat("MMM dd, yyyy HH:mm")
+        val date = inputFormat.parse(deadline)
+        date?.let { outputFormat.format(it) } ?: deadline
+    } catch (e: Exception) {
+        // Fallback to original string if parsing fails
+        deadline
+    }
+}
+
+
 
 @Composable
 fun GoalsList(
@@ -401,7 +425,8 @@ fun GoalItem(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer
-        )
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
             modifier = Modifier
@@ -413,31 +438,24 @@ fun GoalItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                Column(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Checkbox(
-                        checked = false,
-                        onCheckedChange = {
-                            if (it) {
-                                showDeleteDialog = true
-                            }
-                        },
-                        colors = CheckboxDefaults.colors(
-                            checkedColor = MaterialTheme.colorScheme.secondary
-                        )
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = goal.name,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Type: ${goal.type}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 }
-
                 Box {
                     IconButton(onClick = { showOptionsMenu = true }) {
                         Icon(
@@ -445,7 +463,6 @@ fun GoalItem(
                             contentDescription = "More options"
                         )
                     }
-
                     DropdownMenu(
                         expanded = showOptionsMenu,
                         onDismissRequest = { showOptionsMenu = false }
@@ -467,21 +484,11 @@ fun GoalItem(
                     }
                 }
             }
-
+            Spacer(modifier = Modifier.height(8.dp))
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 48.dp)
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = "Type: ${goal.type}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                goal.targetDate?.let {
+                goal.targetDate?.let { targetDate ->
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             painter = painterResource(R.drawable.clock),
@@ -490,23 +497,40 @@ fun GoalItem(
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
+                        val formattedTargetDate = formatTargetDate(targetDate)
                         Text(
-                            text = "Target: $it",
+                            text = "Target: $formattedTargetDate",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     }
                 }
-
+                Spacer(modifier = Modifier.height(4.dp))
                 goal.targetTasks?.let { taskIds ->
                     if (taskIds.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = "Associated tasks: ${taskIds.size}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                ElevatedButton(
+                    onClick = { showDeleteDialog = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.elevatedButtonColors(
+                        containerColor = MaterialTheme.colorScheme.secondary
+                    )
+                ) {
+                    Text(
+                        text = "Mark Achieved",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSecondary
+                    )
                 }
             }
         }
@@ -535,6 +559,22 @@ fun GoalItem(
         )
     }
 }
+
+// Helper function to format target date using SimpleDateFormat
+@Composable
+fun formatTargetDate(targetDate: String): String {
+    return try {
+        // Use SimpleDateFormat to parse and format the date
+        val inputFormat = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+        val outputFormat = java.text.SimpleDateFormat("MMM dd, yyyy HH:mm")
+        val date = inputFormat.parse(targetDate)
+        date?.let { outputFormat.format(it) } ?: targetDate
+    } catch (e: Exception) {
+        // Fallback to original string if parsing fails
+        targetDate
+    }
+}
+
 
 @Composable
 fun PriorityChip(priority: String) {

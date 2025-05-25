@@ -1,11 +1,11 @@
-package com.himanshu.semhub.data.localDb.dao
+package com.himanshu.semhub.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.himanshu.semhub.data.localDb.entities.GoalEntity
+import com.himanshu.semhub.data.local.entities.GoalEntity
 import kotlinx.coroutines.flow.Flow
 
 // GoalDao.kt

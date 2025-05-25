@@ -1,6 +1,6 @@
 package com.himanshu.semhub
 
-import com.himanshu.semhub.data.localDb.timetable.TimetableDao
+import com.himanshu.semhub.data.local.timetable.TimetableDao
 import com.himanshu.semhub.data.remote.ApiService
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull

@@ -1,4 +1,4 @@
-package com.himanshu.semhub.data.localDb.entities
+package com.himanshu.semhub.data.local.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

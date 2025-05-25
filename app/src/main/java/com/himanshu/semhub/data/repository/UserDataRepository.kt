@@ -1,10 +1,10 @@
 package com.himanshu.semhub.data.repository
 
 import android.util.Log
-import com.himanshu.semhub.data.localDb.dao.GoalDao
-import com.himanshu.semhub.data.localDb.dao.GoalTaskCrossRefDao
-import com.himanshu.semhub.data.localDb.dao.SubtaskDao
-import com.himanshu.semhub.data.localDb.dao.TaskDao
+import com.himanshu.semhub.data.local.dao.GoalDao
+import com.himanshu.semhub.data.local.dao.GoalTaskCrossRefDao
+import com.himanshu.semhub.data.local.dao.SubtaskDao
+import com.himanshu.semhub.data.local.dao.TaskDao
 import com.himanshu.semhub.data.mapper.GoalMapper
 import com.himanshu.semhub.data.mapper.TaskMapper
 import com.himanshu.semhub.data.model.Goal

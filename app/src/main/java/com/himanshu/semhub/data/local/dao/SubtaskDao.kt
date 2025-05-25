@@ -1,10 +1,10 @@
-package com.himanshu.semhub.data.localDb.dao
+package com.himanshu.semhub.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.himanshu.semhub.data.localDb.entities.SubtaskEntity
+import com.himanshu.semhub.data.local.entities.SubtaskEntity
 import kotlinx.coroutines.flow.Flow
 
 // SubtaskDao.kt

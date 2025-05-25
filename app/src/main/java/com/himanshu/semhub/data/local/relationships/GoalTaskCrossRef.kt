@@ -1,10 +1,10 @@
-package com.himanshu.semhub.data.localDb.relationships
+package com.himanshu.semhub.data.local.relationships
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
-import com.himanshu.semhub.data.localDb.entities.GoalEntity
-import com.himanshu.semhub.data.localDb.entities.TaskEntity
+import com.himanshu.semhub.data.local.entities.GoalEntity
+import com.himanshu.semhub.data.local.entities.TaskEntity
 
 @Entity(
     tableName = "goal_task_cross_ref",

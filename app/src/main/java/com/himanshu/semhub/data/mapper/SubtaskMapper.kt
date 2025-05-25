@@ -1,6 +1,6 @@
 package com.himanshu.semhub.data.mapper
 
-import com.himanshu.semhub.data.localDb.entities.SubtaskEntity
+import com.himanshu.semhub.data.local.entities.SubtaskEntity
 import com.himanshu.semhub.data.model.Subtask
 
 object SubtaskMapper {
